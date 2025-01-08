@@ -32,8 +32,8 @@ public class DriveSubsystem extends SubsystemBase {
     private final RelativeEncoder rightRearEncoder;
 
     // SmartVelocity PID
-    private final double SmartVelocityP = 0.00001;
-    private final double SmartVelocityI = 0.0000006;
+    private final double SmartVelocityP = 0.003;
+    private final double SmartVelocityI = 0; // 0.00003
     private final double SmartVelocityD = 0;
     private final double SmartVelocityFF = 0;
 
@@ -43,7 +43,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final double MinOutput = -1;
 
     // max motor acceleration
-    private final double maxAccel = 2;
+    private final double maxAccel = 25;
     private final int SmartMotionID = 0;
     private int SmartVelocityID = 1;
     private final int maxVel = 5;
@@ -176,17 +176,23 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void setLeftSideMotorsSpeed(double input) {
-        double speed = scaleJoystickInput(input);
+        double speed = input * maxVel;
+        if (Math.abs(input) < 0.05) {  // Dead zone for joystick
+            speed = 0;  // Stop the motor
+        }
         System.out.println("Left value" + speed);
-        leftFrontPID.setReference(5, ControlType.kSmartVelocity);
-        leftRearPID.setReference(5, ControlType.kSmartVelocity);
+        leftFrontPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
+        leftRearPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
     }
 
     public void setRightSideMotorSpeed(double input) {
-        double speed = scaleJoystickInput(input);
+        double speed = input * maxVel;
+        if (Math.abs(input) < 0.05) {  // Dead zone for joystick
+            speed = 0;  // Stop the motor
+        }
         System.out.print(" Right value" + speed);
-        rightFrontPID.setReference(5, ControlType.kSmartVelocity);
-        rightRearPID.setReference(5, ControlType.kSmartVelocity);
+        rightFrontPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
+        rightRearPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
     }
 
     // Logarithmic scaling function
