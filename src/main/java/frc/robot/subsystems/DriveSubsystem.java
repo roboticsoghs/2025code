@@ -32,7 +32,7 @@ public class DriveSubsystem extends SubsystemBase {
     private final RelativeEncoder rightRearEncoder;
 
     // SmartVelocity PID
-    private final double SmartVelocityP = 0.003;
+    private final double SmartVelocityP = 0.0002;
     private final double SmartVelocityI = 0; // 0.00003
     private final double SmartVelocityD = 0;
     private final double SmartVelocityFF = 0;
@@ -43,11 +43,10 @@ public class DriveSubsystem extends SubsystemBase {
     private final double MinOutput = -1;
 
     // max motor acceleration
-    private final double maxAccel = 25;
+    private final double maxAccel = 1000000000;
     private final int SmartMotionID = 0;
     private int SmartVelocityID = 1;
-    private final int maxVel = 5;
-    private final int minVel = 0;
+    private final int maxVel = 4075;
 
     public final double allowedError = 0.05;
 
@@ -87,9 +86,9 @@ public class DriveSubsystem extends SubsystemBase {
         rightRear.setIdleMode(IdleMode.kBrake);
 
         leftFront.setInverted(false);
-        leftRear.setInverted(false);
+        // leftRear.setInverted(false);
         rightFront.setInverted(true);
-        rightRear.setInverted(true);
+        // rightRear.setInverted(true);
 
         // Enable voltage compensation
         leftFront.enableVoltageCompensation(12.0);
@@ -123,7 +122,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         leftFrontPID.setSmartMotionMaxAccel(maxAccel, SmartVelocityID);
         leftFrontPID.setSmartMotionMaxVelocity(maxVel, SmartVelocityID);
-        leftFrontPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
+        // leftFrontPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
 
         // left rear motor
         leftRearPID.setP(SmartVelocityP, SmartVelocityID);
@@ -134,7 +133,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         leftRearPID.setSmartMotionMaxAccel(maxAccel, SmartVelocityID);
         leftRearPID.setSmartMotionMaxVelocity(maxVel, SmartVelocityID);
-        leftRearPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
+        // leftRearPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
 
         // right front motor
         rightFrontPID.setP(SmartVelocityP, SmartVelocityID);
@@ -145,7 +144,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         rightFrontPID.setSmartMotionMaxAccel(maxAccel, SmartVelocityID);
         rightFrontPID.setSmartMotionMaxVelocity(maxVel, SmartVelocityID);
-        rightFrontPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
+        // rightFrontPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
 
         // right rear motor
         rightRearPID.setP(SmartVelocityP, SmartVelocityID);
@@ -156,7 +155,7 @@ public class DriveSubsystem extends SubsystemBase {
 
         rightRearPID.setSmartMotionMaxAccel(maxAccel, SmartVelocityID);
         rightRearPID.setSmartMotionMaxVelocity(maxVel, SmartVelocityID);
-        rightRearPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
+        // rightRearPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
     }
 
     public double getleftFrontEncoder() {
@@ -175,11 +174,8 @@ public class DriveSubsystem extends SubsystemBase {
         return rightRearEncoder.getPosition();
     }
 
-    public void setLeftSideMotorsSpeed(double input) {
+    public void setLeftSideMotorSpeed(double input) {
         double speed = input * maxVel;
-        if (Math.abs(input) < 0.05) {  // Dead zone for joystick
-            speed = 0;  // Stop the motor
-        }
         System.out.println("Left value" + speed);
         leftFrontPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
         leftRearPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
@@ -187,26 +183,14 @@ public class DriveSubsystem extends SubsystemBase {
 
     public void setRightSideMotorSpeed(double input) {
         double speed = input * maxVel;
-        if (Math.abs(input) < 0.05) {  // Dead zone for joystick
-            speed = 0;  // Stop the motor
-        }
         System.out.print(" Right value" + speed);
         rightFrontPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
-        rightRearPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
+        rightRearPID.setReference(speed,ControlType.kSmartVelocity, SmartVelocityID);
     }
 
-    // Logarithmic scaling function
-    private double scaleJoystickInput(double input) {
-        // In meters per minute
-        double linearVel = input * maxVel * 60;
-        double rotationVel = linearVel / (2 * Math.PI * 0.07);
-        double sign = Math.signum(rotationVel);
-        double rpm = sign * Math.log1p(9 * Math.abs(rotationVel)) / Math.log1p(9);
-        return rpm * leftFrontEncoder.getCountsPerRevolution();
-    }
 
     public void setAllMotorsSpeed(double speed) {
-        setLeftSideMotorsSpeed(speed);
+        setLeftSideMotorSpeed(speed);
         setRightSideMotorSpeed(speed);
     }
 

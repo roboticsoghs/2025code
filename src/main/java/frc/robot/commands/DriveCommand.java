@@ -24,7 +24,7 @@ public class DriveCommand extends Command {
     @Override
     public void end(boolean interrupted) {
         // Stop the robot when the command ends
-        RobotContainer.drivetrain.setLeftSideMotorsSpeed(0);
+        RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
         RobotContainer.drivetrain.setRightSideMotorSpeed(0);
         finished = true;
     }
