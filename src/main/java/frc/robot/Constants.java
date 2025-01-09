@@ -20,6 +20,7 @@ public final class Constants {
     public static double gearRatio = 10.86;
     public static double wheelRadius = 3;
 
+    
     public static boolean slowMode = false; 
     public static double slowModeMultipler = 0.3;
     /**
