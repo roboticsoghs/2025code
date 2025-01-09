@@ -17,6 +17,8 @@ public final class Constants {
     public static int leftBackMotorPort = 4;
     public static int rightFrontMotorPort = 2; 
     public static int rightBackMotorPort = 5; 
+    public static double gearRatio = 10.86;
+    public static double wheelRadius = 3;
 
     public static boolean slowMode = false; 
     public static double slowModeMultipler = 0.3;
