@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -74,14 +75,13 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public void setPosition(ElevatorPosition pos) {
-    // TODO: implement
-    switch (pos) {
-      case BOTTOM:
-        break;
-      case MID:
-        break;
-      case TOP:
-        break;
-    }
+    double targetRad = pos.getRadians();
+    double targetTicks = targetRad * (42 / (2 * Math.PI));
+
+    ElevatorPIDController.setReference(targetTicks, ControlType.kSmartMotion);
+  }
+
+  public double getElevatorPositionRad() {
+    return getEncoderPosition() * (2 * Math.PI / 42);
   }
 }
