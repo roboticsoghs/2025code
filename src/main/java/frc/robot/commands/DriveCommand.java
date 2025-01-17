@@ -18,7 +18,7 @@ public class DriveCommand extends Command {
     @Override
     public void execute() {
         // Get joystick values from Xbox controller
-        
+        RobotContainer.drivetrain.setRightSideMotorSpeed(0.1);
     }
 
     @Override

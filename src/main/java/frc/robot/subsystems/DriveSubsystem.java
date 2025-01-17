@@ -2,28 +2,39 @@ package frc.robot.subsystems;
 
 import java.util.function.IntPredicate;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkPIDController;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.spark.config.SparkMaxConfig;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+// import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.spark.SparkBase.ControlType;
+import com.revrobotics.spark.SparkBase.PersistMode;
+import com.revrobotics.spark.SparkBase.ResetMode;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class DriveSubsystem extends SubsystemBase {
     // motors
-    private CANSparkMax leftFront;
-    private CANSparkMax leftRear;
-    private CANSparkMax rightFront;
-    private CANSparkMax rightRear;
+    private SparkMax leftFrontMotor;
+    private SparkMax leftRearMotor;
+    private SparkMax rightFrontMotor;
+    private SparkMax rightRearMotor;
+
+    // motor configs
+    private SparkMaxConfig leftFrontConfig;
+    private SparkMaxConfig leftRearConfig;
+    private SparkMaxConfig rightFrontConfig;
+    private SparkMaxConfig rightRearConfig;
 
     // motor PID controllers
-    private final SparkPIDController leftFrontPID;
-    private final SparkPIDController leftRearPID;
-    private final SparkPIDController rightFrontPID;
-    private final SparkPIDController rightRearPID;
+    private final SparkClosedLoopController leftFrontPID;
+    private final SparkClosedLoopController leftRearPID;
+    private final SparkClosedLoopController rightFrontPID;
+    private final SparkClosedLoopController rightRearPID;
 
     // motor encoders
     private final RelativeEncoder leftFrontEncoder;
@@ -53,48 +64,56 @@ public class DriveSubsystem extends SubsystemBase {
     private final DifferentialDrive differentialDrive;
 
     public DriveSubsystem() {
-        // set values
-        leftFront = new CANSparkMax(Constants.leftFrontMotorPort, MotorType.kBrushless);
-        leftRear = new CANSparkMax(Constants.leftBackMotorPort, MotorType.kBrushless);
-        rightFront = new CANSparkMax(Constants.rightFrontMotorPort, MotorType.kBrushless);
-        rightRear = new CANSparkMax(Constants.rightBackMotorPort, MotorType.kBrushless);
+        // init motors
+        leftFrontMotor = new SparkMax(Constants.leftFrontMotorPort, MotorType.kBrushless);
+        leftRearMotor = new SparkMax(Constants.leftBackMotorPort, MotorType.kBrushless);
+        rightFrontMotor = new SparkMax(Constants.rightFrontMotorPort, MotorType.kBrushless);
+        rightRearMotor = new SparkMax(Constants.rightBackMotorPort, MotorType.kBrushless);
 
-        leftFront.restoreFactoryDefaults();
-        leftRear.restoreFactoryDefaults();
-        rightFront.restoreFactoryDefaults();
-        rightRear.restoreFactoryDefaults();
-
-        leftFrontPID = leftFront.getPIDController();
-        leftRearPID = leftRear.getPIDController();
-        rightFrontPID = rightFront.getPIDController();
-        rightRearPID = rightRear.getPIDController();
-
-        leftFrontEncoder = leftFront.getEncoder();
-        leftRearEncoder = leftRear.getEncoder();
-        rightFrontEncoder = rightFront.getEncoder();
-        rightRearEncoder = rightRear.getEncoder();
+        // init config
+        leftFrontConfig = new SparkMaxConfig();
+        leftRearConfig = new SparkMaxConfig();
+        rightFrontConfig = new SparkMaxConfig();
+        rightRearConfig = new SparkMaxConfig();
 
         // Configuring the rear motors to follow the front motors
-        leftRear.follow(leftFront);
-        rightRear.follow(rightFront);
+        leftRearConfig.follow(leftFrontMotor);
+        rightRearConfig.follow(rightFrontMotor);
 
-        configurePIDControllers();
+        // init PID controllers (closed loop)
+        leftFrontPID = leftFrontMotor.getClosedLoopController();
+        leftRearPID = leftRearMotor.getClosedLoopController();
+        rightFrontPID = rightFrontMotor.getClosedLoopController();
+        rightRearPID = rightRearMotor.getClosedLoopController();
 
-        leftFront.setIdleMode(IdleMode.kBrake);
-        leftRear.setIdleMode(IdleMode.kBrake);
-        rightFront.setIdleMode(IdleMode.kBrake);
-        rightRear.setIdleMode(IdleMode.kBrake);
+        // init encoders
+        leftFrontEncoder = leftFrontMotor.getEncoder();
+        leftRearEncoder = leftRearMotor.getEncoder();
+        rightFrontEncoder = rightFrontMotor.getEncoder();
+        rightRearEncoder = rightRearMotor.getEncoder();
 
-        leftFront.setInverted(false);
+        // configurePIDControllers();
+
+        // set idle mode for motors
+        leftFrontConfig.idleMode(IdleMode.kBrake);
+        leftRearConfig.idleMode(IdleMode.kBrake);
+        rightFrontConfig.idleMode(IdleMode.kBrake);
+        rightRearConfig.idleMode(IdleMode.kBrake);
+        
+        leftFrontConfig.inverted(false);
         // leftRear.setInverted(false);
-        rightFront.setInverted(true);
+        rightFrontConfig.inverted(true);
         // rightRear.setInverted(true);
 
         // Enable voltage compensation
-        leftFront.enableVoltageCompensation(12.0);
-        leftRear.enableVoltageCompensation(12.0);
-        rightFront.enableVoltageCompensation(12.0);
-        rightRear.enableVoltageCompensation(12.0);
+        // leftFront.enableVoltageCompensation(12.0);
+        // leftRear.enableVoltageCompensation(12.0);
+        // rightFront.enableVoltageCompensation(12.0);
+        // rightRear.enableVoltageCompensation(12.0);
+        leftFrontConfig.voltageCompensation(12.0);
+        leftRearConfig.voltageCompensation(12.0);
+        rightFrontConfig.voltageCompensation(12.0);
+        rightRearConfig.voltageCompensation(12.0);
 
         // Set current limits
         leftFront.setSmartCurrentLimit(40);
@@ -108,7 +127,21 @@ public class DriveSubsystem extends SubsystemBase {
         rightFront.burnFlash();
         rightRear.burnFlash();
 
-        differentialDrive = new DifferentialDrive(leftFront, rightFront);
+        // restore factory defaults and set new configs for each motor
+        leftFrontConfig.signals.primaryEncoderPositionPeriodMs(5);
+        leftFrontMotor.configure(leftFrontConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        leftRearConfig.signals.primaryEncoderPositionPeriodMs(5);
+        leftRearMotor.configure(leftFrontConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        rightFrontConfig.signals.primaryEncoderPositionPeriodMs(5);
+        rightFrontMotor.configure(leftFrontConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        rightRearConfig.signals.primaryEncoderPositionPeriodMs(5);
+        rightRearMotor.configure(leftFrontConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+        // differential drive init
+        differentialDrive = new DifferentialDrive(leftFrontMotor, rightFrontMotor);
     }
 
     private void configurePIDControllers() {
