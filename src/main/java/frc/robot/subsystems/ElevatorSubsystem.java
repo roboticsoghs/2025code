@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
@@ -14,10 +15,33 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.ElevatorSubsystem.ElevatorStates;
 
 public class ElevatorSubsystem extends SubsystemBase {
+    public static enum ElevatorPositions { //Different states that determines what stage the arm is in.
+        RESTING_POSITION(0),
+        LEVEL_0(0), // TODO:
+        LEVEL_1(0), // TODO:
+        LEVEL_2(0); // TODO:
+
+        private final int pos;
+        ElevatorPositions(int pos)  {
+            this.pos = pos;
+        }
+        public int getValue() { return pos; }
+    }
+
+    public static enum ElevatorStates { //Different states that determines what stage the arm is in.
+        NOT_INITIALIZED,
+        INITIALIZING,
+        INITIALIZED
+    }
+
+    DigitalInput limitSwitch = new DigitalInput(Constants.limitPort);
+
     private final SparkMax leftMotor;
     private final SparkMax rightMotor;
 
@@ -49,9 +73,21 @@ public class ElevatorSubsystem extends SubsystemBase {
     private int MaxMotionID = 1;
     private final int maxVel = 4075;
 
+    // elevator
+    private ElevatorPositions position;
+    private ElevatorStates isCalibrated;
+    private double restingLeftPosition;
+    private double restingRightPosition;
+
     public final double allowedError = 0.05;
 
     public ElevatorSubsystem() {
+        // init elevator
+        isCalibrated = ElevatorStates.INITIALIZING;
+        position = ElevatorPositions.RESTING_POSITION;
+        restingLeftPosition = (double) 0;
+        restingRightPosition = (double) 0;
+
         // init motors
         leftMotor = new SparkMax(Constants.elevatorLeftMotorPort, MotorType.kBrushless);
         rightMotor = new SparkMax(Constants.elevatorRightMotorPort, MotorType.kBrushless);
@@ -76,9 +112,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightConfig.idleMode(IdleMode.kBrake);
 
         leftConfig.inverted(false);
-        // leftRear.setInverted(false);
         rightConfig.inverted(true);
-        // rightRear.setInverted(true);
 
         // set voltage compensation
         leftConfig.voltageCompensation(12.0);
@@ -117,12 +151,81 @@ public class ElevatorSubsystem extends SubsystemBase {
         rightConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
     }
 
-    public double getleftEncoder() {
-        return leftEncoder.getPosition();
+    /**
+     * @return position in ticks
+     */
+    public double getLeftEncoder() {
+        return leftEncoder.getPosition() * 42;
     }
 
-
+    /**
+     * @return position in ticks
+     */
     public double getRightEncoder() {
-        return rightEncoder.getPosition();
+        return rightEncoder.getPosition() * 42;
+    }
+
+    public void setHeight(ElevatorPositions pos) {
+        switch (pos) {
+            case RESTING_POSITION -> {
+                // should trip limit switch
+                // resets and calibrates elevator
+                if (getLimitSwitch()) break; // elevator already is in resting position
+
+                leftPID.setReference(-0.1, ControlType.kMAXMotionVelocityControl);
+
+                resetEncoders();
+            }
+
+            case LEVEL_0 -> {
+                 // find height in inches
+
+            }
+
+            case LEVEL_1 -> {
+                // find height in inches
+
+            }
+
+            case LEVEL_2 -> {
+                // find height in inches
+
+            }
+        }
+    }
+
+    public double getHeight() {
+        // TODO: implement
+        // return getLeftEncoder();
+        return 0;
+    }
+
+    public boolean getLimitSwitch() {
+        return limitSwitch.get();
+    }
+
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
+        if (isCalibrated == ElevatorStates.INITIALIZING && limitSwitch.get()) {
+            // Stop the motor when limit switch is triggered
+            leftMotor.stopMotor();
+
+            // Reset encoder or position tracking
+            resetEncoders();
+
+            // Mark as calibrated
+            isCalibrated = ElevatorStates.INITIALIZED;
+        }
+
+        // Optional: If calibration hasn't completed, move the elevator down
+        if (isCalibrated == ElevatorStates.INITIALIZING) {
+            leftPID.setReference(-0.1, ControlType.kDutyCycle); // Move elevator slowly downward
+        }
+    }
+
+    public void resetEncoders() {
+        restingLeftPosition = getLeftEncoder();
+        restingRightPosition = getRightEncoder();
     }
 }

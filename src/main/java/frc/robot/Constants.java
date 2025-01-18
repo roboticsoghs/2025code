@@ -13,16 +13,23 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    // drivetrain IDs
     public static int leftFrontMotorPort = 1;
     public static int leftBackMotorPort = 4;
     public static int rightFrontMotorPort = 2;
     public static int rightBackMotorPort = 5;
-    public static int elevatorRightMotorPort = 0; // TODO:
-    public static int elevatorLeftMotorPort = 0; // TODO:
+
+    // elevator IDs
+    public static int elevatorRightMotorPort = 7;
+    public static int elevatorLeftMotorPort = 6;
+    public static int limitPort = 3;
+    // TODO: Configure motors/sensors for these ports
 
     public static double gearRatio = 10.86;
     public static double wheelRadius = 3;
 
+    // general
+    public static int encoderTicksPerRotation = 42;
 
     public static boolean slowMode = false;
     public static double slowModeMultipler = 0.3;
