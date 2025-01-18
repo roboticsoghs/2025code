@@ -6,9 +6,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.DriveCommand;
+import frc.robot.commands.AutoCommand;
 import frc.robot.commands.JoystickCommand;
 
 
@@ -19,7 +18,7 @@ import frc.robot.commands.JoystickCommand;
  * project.
  */
 public class Robot extends TimedRobot {
-  private DriveCommand m_autonomousCommand;
+  private AutoCommand m_autonomousCommand;
   JoystickCommand m_Teleop;
   private RobotContainer m_robotContainer;
 
@@ -63,7 +62,7 @@ public class Robot extends TimedRobot {
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
-      m_autonomousCommand = new DriveCommand();
+      m_autonomousCommand = new AutoCommand();
     }
   }
 

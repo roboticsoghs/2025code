@@ -1,34 +1,33 @@
 package frc.robot.subsystems;
 
-import java.util.function.IntPredicate;
-
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.config.SparkMaxConfig;
-import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
-// import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
+import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
+import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class DriveSubsystem extends SubsystemBase {
     // motors
-    private SparkMax leftFrontMotor;
-    private SparkMax leftRearMotor;
-    private SparkMax rightFrontMotor;
-    private SparkMax rightRearMotor;
+    private final SparkMax leftFrontMotor;
+    private final SparkMax leftRearMotor;
+    private final SparkMax rightFrontMotor;
+    private final SparkMax rightRearMotor;
 
     // motor configs
-    private SparkMaxConfig leftFrontConfig;
-    private SparkMaxConfig leftRearConfig;
-    private SparkMaxConfig rightFrontConfig;
-    private SparkMaxConfig rightRearConfig;
+    private final SparkMaxConfig leftFrontConfig;
+    private final SparkMaxConfig leftRearConfig;
+    private final SparkMaxConfig rightFrontConfig;
+    private final SparkMaxConfig rightRearConfig;
 
     // motor PID controllers
     private final SparkClosedLoopController leftFrontPID;
@@ -56,7 +55,7 @@ public class DriveSubsystem extends SubsystemBase {
     // max motor acceleration
     private final double maxAccel = 1000000000;
     private final int SmartMotionID = 0;
-    private int SmartVelocityID = 1;
+    private int MaxMotionID = 1;
     private final int maxVel = 4075;
 
     public final double allowedError = 0.05;
@@ -92,40 +91,30 @@ public class DriveSubsystem extends SubsystemBase {
         rightFrontEncoder = rightFrontMotor.getEncoder();
         rightRearEncoder = rightRearMotor.getEncoder();
 
-        // configurePIDControllers();
-
         // set idle mode for motors
         leftFrontConfig.idleMode(IdleMode.kBrake);
         leftRearConfig.idleMode(IdleMode.kBrake);
         rightFrontConfig.idleMode(IdleMode.kBrake);
         rightRearConfig.idleMode(IdleMode.kBrake);
-        
+
         leftFrontConfig.inverted(false);
         // leftRear.setInverted(false);
         rightFrontConfig.inverted(true);
         // rightRear.setInverted(true);
 
-        // Enable voltage compensation
-        // leftFront.enableVoltageCompensation(12.0);
-        // leftRear.enableVoltageCompensation(12.0);
-        // rightFront.enableVoltageCompensation(12.0);
-        // rightRear.enableVoltageCompensation(12.0);
+        // set voltage compensation
         leftFrontConfig.voltageCompensation(12.0);
         leftRearConfig.voltageCompensation(12.0);
         rightFrontConfig.voltageCompensation(12.0);
         rightRearConfig.voltageCompensation(12.0);
 
         // Set current limits
-        leftFront.setSmartCurrentLimit(40);
-        leftRear.setSmartCurrentLimit(40);
-        rightFront.setSmartCurrentLimit(40);
-        rightRear.setSmartCurrentLimit(40);
+        leftFrontConfig.smartCurrentLimit(40);
+        leftRearConfig.smartCurrentLimit(40);
+        rightFrontConfig.smartCurrentLimit(40);
+        rightRearConfig.smartCurrentLimit(40);
 
-        // Save configurations to flash
-        leftFront.burnFlash();
-        leftRear.burnFlash();
-        rightFront.burnFlash();
-        rightRear.burnFlash();
+        configurePIDControllers();
 
         // restore factory defaults and set new configs for each motor
         leftFrontConfig.signals.primaryEncoderPositionPeriodMs(5);
@@ -147,48 +136,49 @@ public class DriveSubsystem extends SubsystemBase {
     private void configurePIDControllers() {
         // Apply PID constants to the PID controllers
         // left front motor
-        leftFrontPID.setP(SmartVelocityP, SmartVelocityID);
-        leftFrontPID.setI(SmartVelocityI, SmartVelocityID);
-        leftFrontPID.setD(SmartVelocityD, SmartVelocityID);
-        leftFrontPID.setFF(SmartVelocityFF, SmartVelocityID);
-        leftFrontPID.setOutputRange(MinOutput, MaxOutput, SmartVelocityID);
+        leftFrontConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        leftFrontConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
+        leftFrontConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
+        leftFrontConfig.closedLoop.maxMotion.maxVelocity(maxVel);
+        leftFrontConfig.closedLoop.velocityFF(SmartVelocityFF);
+        leftFrontConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
+        // leftFrontConfig.closedLoop.outputRange(MinOutput, MaxOutput);
 
-        leftFrontPID.setSmartMotionMaxAccel(maxAccel, SmartVelocityID);
-        leftFrontPID.setSmartMotionMaxVelocity(maxVel, SmartVelocityID);
-        // leftFrontPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
+        // leftFrontPID.setOutputRange(MinOutput, MaxOutput, MaxMotionID);
+        // leftFrontConfig.setSmartMotionMinOutputVelocity(minVel, MaxMotionID);
 
         // left rear motor
-        leftRearPID.setP(SmartVelocityP, SmartVelocityID);
-        leftRearPID.setI(SmartVelocityI, SmartVelocityID);
-        leftRearPID.setD(SmartVelocityD, SmartVelocityID);
-        leftRearPID.setFF(SmartVelocityFF, SmartVelocityID);
-        leftRearPID.setOutputRange(MinOutput, MaxOutput, SmartVelocityID);
+        leftRearConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        leftRearConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
+        leftRearConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
+        leftRearConfig.closedLoop.maxMotion.maxVelocity(maxVel);
+        leftRearConfig.closedLoop.velocityFF(SmartVelocityFF);
+        leftRearConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
 
-        leftRearPID.setSmartMotionMaxAccel(maxAccel, SmartVelocityID);
-        leftRearPID.setSmartMotionMaxVelocity(maxVel, SmartVelocityID);
-        // leftRearPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
+        // leftRearPID.setOutputRange(MinOutput, MaxOutput, MaxMotionID);
+        // leftRearPID.setSmartMotionMinOutputVelocity(minVel, MaxMotionID);
 
         // right front motor
-        rightFrontPID.setP(SmartVelocityP, SmartVelocityID);
-        rightFrontPID.setI(SmartVelocityI, SmartVelocityID);
-        rightFrontPID.setD(SmartVelocityD, SmartVelocityID);
-        rightFrontPID.setFF(SmartVelocityFF, SmartVelocityID);
-        rightFrontPID.setOutputRange(MinOutput, MaxOutput, SmartVelocityID);
+        rightFrontConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        rightFrontConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
+        rightFrontConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
+        rightFrontConfig.closedLoop.maxMotion.maxVelocity(maxVel);
+        rightFrontConfig.closedLoop.velocityFF(SmartVelocityFF);
+        rightFrontConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
 
-        rightFrontPID.setSmartMotionMaxAccel(maxAccel, SmartVelocityID);
-        rightFrontPID.setSmartMotionMaxVelocity(maxVel, SmartVelocityID);
-        // rightFrontPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
+        // rightFrontPID.setOutputRange(MinOutput, MaxOutput, ClosedLoopSlot.kSlot1);
+        // rightFrontPID.setSmartMotionMinOutputVelocity(minVel, ClosedLoopSlot.kSlot1);
 
         // right rear motor
-        rightRearPID.setP(SmartVelocityP, SmartVelocityID);
-        rightRearPID.setI(SmartVelocityI, SmartVelocityID);
-        rightRearPID.setD(SmartVelocityD, SmartVelocityID);
-        rightRearPID.setFF(SmartVelocityFF, SmartVelocityID);
-        rightRearPID.setOutputRange(MinOutput, MaxOutput, SmartVelocityID);
+        rightRearConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
+        rightRearConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
+        rightRearConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
+        rightRearConfig.closedLoop.maxMotion.maxVelocity(maxVel);
+        rightRearConfig.closedLoop.velocityFF(SmartVelocityFF);
+        rightRearConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
 
-        rightRearPID.setSmartMotionMaxAccel(maxAccel, SmartVelocityID);
-        rightRearPID.setSmartMotionMaxVelocity(maxVel, SmartVelocityID);
-        // rightRearPID.setSmartMotionMinOutputVelocity(minVel, SmartVelocityID);
+        // rightRearPID.setOutputRange(MinOutput, MaxOutput, ClosedLoopSlot.kSlot1);
+        // rightRearPID.setSmartMotionMinOutputVelocity(minVel, ClosedLoopSlot.kSlot1);
     }
 
     public double getleftFrontEncoder() {
@@ -210,15 +200,15 @@ public class DriveSubsystem extends SubsystemBase {
     public void setLeftSideMotorSpeed(double input) {
         double speed = input * maxVel;
         System.out.println("Left value" + speed);
-        leftFrontPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
-        leftRearPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
+        leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+        leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
     }
 
     public void setRightSideMotorSpeed(double input) {
         double speed = input * maxVel;
         System.out.print(" Right value" + speed);
-        rightFrontPID.setReference(speed, ControlType.kSmartVelocity, SmartVelocityID);
-        rightRearPID.setReference(speed,ControlType.kSmartVelocity, SmartVelocityID);
+        rightFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+        rightRearPID.setReference(speed,ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
     }
 
 

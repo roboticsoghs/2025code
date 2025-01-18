@@ -15,18 +15,21 @@ package frc.robot;
 public final class Constants {
     public static int leftFrontMotorPort = 1;
     public static int leftBackMotorPort = 4;
-    public static int rightFrontMotorPort = 2; 
-    public static int rightBackMotorPort = 5; 
+    public static int rightFrontMotorPort = 2;
+    public static int rightBackMotorPort = 5;
+    public static int elevatorRightMotorPort = 0; // TODO:
+    public static int elevatorLeftMotorPort = 0; // TODO:
+
     public static double gearRatio = 10.86;
     public static double wheelRadius = 3;
 
-    
-    public static boolean slowMode = false; 
+
+    public static boolean slowMode = false;
     public static double slowModeMultipler = 0.3;
     /**
      * Determines the number of encoder ticks necessary for drivetrain to turn at certain angle
      * @param angle the angle to turn
-     * @return number of encoder ticks for the each side of the drivetrain to turn 
+     * @return number of encoder ticks for the each side of the drivetrain to turn
      */
     public static double rotateX(double angle){
       double encoderTicks = ((13/90)* angle);
