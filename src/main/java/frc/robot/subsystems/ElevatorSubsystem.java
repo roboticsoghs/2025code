@@ -14,8 +14,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.RelativeEncoder;
 
 import frc.robot.Constants;
-import frc.robot.subsystems.ElevatorSubsystem.POSITION;
-
 
 public class ElevatorSubsystem extends SubsystemBase {
   private CANSparkMax elevatorMotor;
@@ -51,6 +49,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     ElevatorPIDController = elevatorMotor.getPIDController();
 
     defaultPID();
+
+    ElevatorPIDController.setSmartMotionMaxVelocity(5000, 0);
 	}
 
   public void defaultPID() {
