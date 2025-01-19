@@ -3,7 +3,6 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -98,8 +97,13 @@ public class Shooter extends SubsystemBase {
         return Encoder.getPosition() * 42;
     }
 
-    public void shoot_that_fucker() {
+    public void shoot_that_fucker(double x_dist) {
         // Shoot coral at 20% speed
+        double radianConstant = Math.toRadians(35);
+        double t = (-1) * x_dist / Math.sin(radianConstant);
+        double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
+        double yInch = y_diff * 39.37;
+
         PID.setReference(0.2, ControlType.kDutyCycle);
     }
 }
