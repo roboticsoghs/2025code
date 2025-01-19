@@ -114,6 +114,7 @@ public class DriveTrain extends SubsystemBase {
         rightFrontConfig.smartCurrentLimit(40);
         rightRearConfig.smartCurrentLimit(40);
 
+        // configure PID controllers
         configurePIDControllers();
 
         // restore factory defaults and set new configs for each motor
@@ -181,63 +182,100 @@ public class DriveTrain extends SubsystemBase {
         // rightRearPID.setSmartMotionMinOutputVelocity(minVel, ClosedLoopSlot.kSlot1);
     }
 
+    /**
+     * @return rotational value of the motor
+     */
     public double getleftFrontEncoder() {
         return leftFrontEncoder.getPosition();
     }
 
+    /**
+     * @return rotational value of the motor
+     */
     public double getleftRearEncoder() {
         return leftRearEncoder.getPosition();
     }
 
+    /**
+     * @return rotational value of the motor
+     */
     public double getRightFrontEncoder() {
         return rightFrontEncoder.getPosition();
     }
 
+    /**
+     * @return rotational value of the motor
+     */
     public double getRightRearEncoder() {
         return rightRearEncoder.getPosition();
     }
 
+    /**
+     * @param input percent input of speed from left joystick
+     */
     public void setLeftSideMotorSpeed(double input) {
+        // calculate the necessary rpm
         double speed = input * maxVel;
         System.out.println("Left value" + speed);
+        // Set rpm for left motors
         leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
         leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
     }
 
+    /**
+     * @param input percent input of speed from right joystick
+     */
     public void setRightSideMotorSpeed(double input) {
+        // calculate the necessary rpm
         double speed = input * maxVel;
         System.out.print(" Right value" + speed);
+        // Set rpm for left motors
         rightFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
         rightRearPID.setReference(speed,ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
     }
 
-
+    /**
+     * @param speed percent output for both motors
+     */
     public void setAllMotorsSpeed(double speed) {
         setLeftSideMotorSpeed(speed);
         setRightSideMotorSpeed(speed);
     }
 
+    /**
+     * @param rotations percent output for robot
+     */
     public void setLeftSideMotorsPosition(double rotations) {
+        // Controlling robot through percent output/motion control
         leftFrontPID.setReference(rotations, ControlType.kDutyCycle);
         leftRearPID.setReference(rotations, ControlType.kDutyCycle);
     }
 
+    /**
+     * @param rotations percent output for robot
+     */
     public void setRightSideMotorsPosition(double rotations) {
+        // Controlling robot through percent output/motion control
         rightFrontPID.setReference(rotations, ControlType.kDutyCycle);
         rightRearPID.setReference(rotations, ControlType.kDutyCycle);
     }
 
+    /**
+     * @param rotations percent output for robot motors
+     */
     public void setAllMotorsPosition(double rotations) {
         setLeftSideMotorsPosition(rotations);
         setRightSideMotorsPosition(rotations);
     }
 
     public void resetLeftSideEncoders() {
+        // Set encoder positon as 0
         leftFrontEncoder.setPosition(0);
         leftRearEncoder.setPosition(0);
     }
 
     public void resetRightSideEncoders() {
+        // Set encoder positon as 0
         rightFrontEncoder.setPosition(0);
         rightRearEncoder.setPosition(0);
     }
@@ -247,7 +285,12 @@ public class DriveTrain extends SubsystemBase {
         resetRightSideEncoders();
     }
 
+    /**
+     * @param leftSpeed percent output of left
+     * @param rightSpeed percent output of right
+     */
     public void arcadeDrive(double leftSpeed, double rightSpeed) {
+        // Only use for practice training
         differentialDrive.arcadeDrive(leftSpeed, rightSpeed);
     }
 

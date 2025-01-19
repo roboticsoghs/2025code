@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
+/* Copyright (c) 2025 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -40,17 +40,23 @@ public class JoystickCommand extends Command {
   public void execute() {
     // X, A, B, Y
     if(RobotContainer.driveStick.getXButton()){
-      Constants.slowMode = !Constants.slowMode;
+      // switches between fast and slow speed
+      // Constants.slowMode = !Constants.slowMode;
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_3);
+      RobotContainer.shooter.shoot_that_fucker();
     }
     if(RobotContainer.driveStick.getYButton()){
+      // shoots coral at bottom of reef (L0)
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
       RobotContainer.shooter.shoot_that_fucker();
     }
     if(RobotContainer.driveStick.getAButton()){
+      // shoots coral at L1
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
       RobotContainer.shooter.shoot_that_fucker();
     }
     if(RobotContainer.driveStick.getBButton()){
+      // shoots coral at L2
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
       RobotContainer.shooter.shoot_that_fucker();
     }
@@ -77,7 +83,7 @@ public class JoystickCommand extends Command {
     }
     // RobotContainer.drivetrain.arcadeDrive(leftAxisValue, rightAxisValue);
 
-        // Set the motor speeds
+    // Set the motor speeds
     RobotContainer.drivetrain.setLeftSideMotorSpeed(leftSpeed);
     RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);

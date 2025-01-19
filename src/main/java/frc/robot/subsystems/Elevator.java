@@ -77,8 +77,6 @@ public class Elevator extends SubsystemBase {
     // elevator
     private ElevatorPosition position;
     private ElevatorStates isCalibrated;
-    private double restingLeftPosition;
-    private double restingRightPosition;
 
     public final double allowedError = 0.05;
 
@@ -86,8 +84,6 @@ public class Elevator extends SubsystemBase {
         // init elevator
         isCalibrated = ElevatorStates.INITIALIZING;
         position = ElevatorPosition.RESTING_POSITION;
-        restingLeftPosition = (double) 0;
-        restingRightPosition = (double) 0;
 
         // init motors
         leftMotor = new SparkMax(Constants.elevatorLeftMotorPort, MotorType.kBrushless);
@@ -171,7 +167,7 @@ public class Elevator extends SubsystemBase {
             case RESTING_POSITION -> {
                 // should trip limit switch
                 // resets and calibrates elevator
-                if (restingLeftPosition == getLeftEncoder() && restingRightPosition == getRightEncoder()) break; // elevator already is in resting position
+                if (0 == getLeftEncoder() && 0 == getRightEncoder()) break; // elevator already is in resting position
 
                 // leftPID.setReference(-0.1, ControlType.kMAXMotionVelocityControl);
                 position = ElevatorPosition.RESTING_POSITION;
@@ -198,13 +194,19 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    /**
+     * @return height in inches
+     */
     public double getHeight() {
         // TODO: find scaling factor
-        double scalingFactor = 1; // converts ticks to inches
+        double scalingFactor = 1; // converts ticks to inches ( x ticks = 1 inch )
 
-        return (getLeftEncoder() - restingLeftPosition) * scalingFactor;
+        return (getLeftEncoder()) * scalingFactor;
     }
 
+    /**
+     * @return true if something is detected, false if nothing is detected
+     */
     public boolean getLimitSwitch() {
         return limitSwitch.get();
     }
@@ -219,7 +221,7 @@ public class Elevator extends SubsystemBase {
             // Reset encoder or position tracking
             resetEncoders();
             System.out.println("Encoder resting values have been set");
-            System.out.println("Right Encoder Value: " + restingRightPosition + " Left Encoder Value: " + restingLeftPosition);
+            System.out.println("Right Encoder Value: " + " Left Encoder Value: ");
             // Mark as calibrated
             isCalibrated = ElevatorStates.INITIALIZED;
         } else if (isCalibrated == ElevatorStates.INITIALIZING) {
@@ -228,8 +230,11 @@ public class Elevator extends SubsystemBase {
         }
     }
 
+    /**
+     * sets current encoder values for left and right motors as the resting positions
+     */
     public void resetEncoders() {
-        restingLeftPosition = getLeftEncoder();
-        restingRightPosition = getRightEncoder();
+        leftEncoder.setPosition(0);
+        rightEncoder.setPosition(0);
     }
 }

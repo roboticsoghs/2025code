@@ -18,6 +18,7 @@ import frc.robot.commands.JoystickCommand;
  * project.
  */
 public class Robot extends TimedRobot {
+  // Instantiate Command Classes
   private AutoCommand m_autonomousCommand;
   JoystickCommand m_Teleop;
   private RobotContainer m_robotContainer;
@@ -60,7 +61,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // schedule the autonomous command (example)
+    // schedule the autonomous command
     if (m_autonomousCommand != null) {
       m_autonomousCommand = new AutoCommand();
     }
@@ -69,6 +70,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    // Continously run periodic
     m_autonomousCommand.execute();
   }
 

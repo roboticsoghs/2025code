@@ -89,7 +89,6 @@ public class Shooter extends SubsystemBase {
         config.closedLoop.maxMotion.maxVelocity(maxVel);
         config.closedLoop.velocityFF(SmartVelocityFF);
         config.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
-
     }
 
     /**
@@ -100,9 +99,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shoot_that_fucker() {
-        // Do some calculations about how high we might want to adjust the elevator from where it already is
-        // All calculations are made in meters
-
+        // Shoot coral at 20% speed
         PID.setReference(0.2, ControlType.kDutyCycle);
     }
 }

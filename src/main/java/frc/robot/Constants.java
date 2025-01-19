@@ -39,6 +39,7 @@ public final class Constants {
 
     public static boolean slowMode = false;
     public static double slowModeMultipler = 0.3;
+
     /**
      * Determines the number of encoder ticks necessary for drivetrain to turn at certain angle
      * @param angle the angle to turn
@@ -49,7 +50,10 @@ public final class Constants {
       return encoderTicks;
     }
 
-    public static final double allowedError = 0.05;
-    public static final int leftAxis = 1;
-    public static final int rightAxis = 5;
+    // allowed error for motors
+    public static double allowedError = 0.05;
+
+    // other values
+    public static int leftAxis = 1;
+    public static int rightAxis = 5;
 }
