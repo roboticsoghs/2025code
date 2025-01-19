@@ -13,6 +13,7 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -216,7 +217,7 @@ public class DriveTrain extends SubsystemBase {
     public void setLeftSideMotorSpeed(double input) {
         // calculate the necessary rpm
         double speed = input * maxVel;
-        System.out.println("Left value" + speed);
+        SmartDashboard.putNumber("Speed of left side(rpm): ", speed);
         // Set rpm for left motors
         leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
         leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
@@ -228,7 +229,7 @@ public class DriveTrain extends SubsystemBase {
     public void setRightSideMotorSpeed(double input) {
         // calculate the necessary rpm
         double speed = input * maxVel;
-        System.out.print(" Right value" + speed);
+        SmartDashboard.putNumber("Speed of right side(rpm): ", speed);
         // Set rpm for left motors
         rightFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
         rightRearPID.setReference(speed,ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);

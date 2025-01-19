@@ -43,22 +43,22 @@ public class JoystickCommand extends Command {
       // switches between fast and slow speed
       // Constants.slowMode = !Constants.slowMode;
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_3);
-      RobotContainer.shooter.shoot_that_fucker();
+      RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
     if(RobotContainer.driveStick.getYButton()){
       // shoots coral at bottom of reef (L0)
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
-      RobotContainer.shooter.shoot_that_fucker();
+      RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(RobotContainer.driveStick.getAButton()){
       // shoots coral at L1
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
-      RobotContainer.shooter.shoot_that_fucker();
+      RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(RobotContainer.driveStick.getBButton()){
       // shoots coral at L2
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
-      RobotContainer.shooter.shoot_that_fucker();
+      RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
 
