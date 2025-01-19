@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveTrain extends SubsystemBase {
     // motors
     private final SparkMax leftFrontMotor;
     private final SparkMax leftRearMotor;
@@ -62,7 +62,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     private final DifferentialDrive differentialDrive;
 
-    public DriveSubsystem() {
+    public DriveTrain() {
         // init motors
         leftFrontMotor = new SparkMax(Constants.leftFrontMotorPort, MotorType.kBrushless);
         leftRearMotor = new SparkMax(Constants.leftBackMotorPort, MotorType.kBrushless);

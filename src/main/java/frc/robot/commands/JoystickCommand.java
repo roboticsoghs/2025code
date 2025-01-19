@@ -7,10 +7,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Elevator.ElevatorPosition;
 
 public class JoystickCommand extends Command {
   private double leftSpeed = 0;
@@ -22,7 +22,7 @@ public class JoystickCommand extends Command {
    */
   public JoystickCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.drivetrain);
+    addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
   }
 
   // Called when the command is initially scheduled.
@@ -38,15 +38,29 @@ public class JoystickCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // X, A, B, Y
     if(RobotContainer.driveStick.getXButton()){
       Constants.slowMode = !Constants.slowMode;
     }
-    
-        // Get the value of the left Y axis (left joystick vertical movement)
+    if(RobotContainer.driveStick.getYButton()){
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+      RobotContainer.shooter.shoot_that_fucker();
+    }
+    if(RobotContainer.driveStick.getAButton()){
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
+      RobotContainer.shooter.shoot_that_fucker();
+    }
+    if(RobotContainer.driveStick.getBButton()){
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+      RobotContainer.shooter.shoot_that_fucker();
+    }
+    RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
+
+    // Get the value of the left Y axis (left joystick vertical movement)
     double leftAxisValue = -RobotContainer.driveStick.getLeftY();
     if (Math.abs(leftAxisValue) > 0.03) { // Apply a deadband
-        leftSpeed = Constants.slowMode 
-                    ? Constants.slowModeMultipler * leftAxisValue 
+        leftSpeed = Constants.slowMode
+                    ? Constants.slowModeMultipler * leftAxisValue
                     : leftAxisValue;
     } else {
         leftSpeed = 0;
@@ -55,14 +69,14 @@ public class JoystickCommand extends Command {
     // Get the value of the right Y axis (right joystick vertical movement)
     double rightAxisValue = -RobotContainer.driveStick.getRightY();
     if (Math.abs(rightAxisValue) > 0.03) { // Apply a deadband
-        rightSpeed = Constants.slowMode 
-                    ? Constants.slowModeMultipler * rightAxisValue 
+        rightSpeed = Constants.slowMode
+                    ? Constants.slowModeMultipler * rightAxisValue
                     : rightAxisValue;
     } else {
         rightSpeed = 0;
     }
     // RobotContainer.drivetrain.arcadeDrive(leftAxisValue, rightAxisValue);
-    
+
         // Set the motor speeds
     RobotContainer.drivetrain.setLeftSideMotorSpeed(leftSpeed);
     RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);

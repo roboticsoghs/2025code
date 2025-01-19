@@ -23,12 +23,18 @@ public final class Constants {
     public static int elevatorRightMotorPort = 7;
     public static int elevatorLeftMotorPort = 6;
     public static int limitPort = 3;
+    public static int shooterPort = 8;
     // TODO: Configure motors/sensors for these ports
 
-    public static double gearRatio = 10.86;
-    public static double wheelRadius = 3;
+    // Configured these values in inches
+    public static int LEVEL_0_HEIGHT = 8;
+    public static int LEVEL_1_HEIGHT = 8;
+    public static int LEVEL_2_HEIGHT = 8;
+    public static int LEVEL_3_HEIGHT = 8;
 
     // general
+    public static double gearRatio = 10.86;
+    public static double wheelRadius = 3;
     public static int encoderTicksPerRotation = 42;
 
     public static boolean slowMode = false;

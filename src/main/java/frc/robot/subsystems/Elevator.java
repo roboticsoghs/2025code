@@ -18,17 +18,18 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.ElevatorSubsystem.ElevatorStates;
+import frc.robot.subsystems.Elevator.ElevatorPosition;
 
-public class ElevatorSubsystem extends SubsystemBase {
-    public static enum ElevatorPositions { //Different states that determines what stage the arm is in.
+public class Elevator extends SubsystemBase {
+    public static enum ElevatorPosition { //Different states that determines what stage the arm is in.
         RESTING_POSITION(0),
         LEVEL_0(0), // TODO:
         LEVEL_1(0), // TODO:
-        LEVEL_2(0); // TODO:
+        LEVEL_2(0), // TODO:
+        LEVEL_3(0); // TODO:
 
         private final int pos;
-        ElevatorPositions(int pos)  {
+        ElevatorPosition(int pos)  {
             this.pos = pos;
         }
         public int getValue() { return pos; }
@@ -74,17 +75,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final int maxVel = 4075;
 
     // elevator
-    private ElevatorPositions position;
+    private ElevatorPosition position;
     private ElevatorStates isCalibrated;
     private double restingLeftPosition;
     private double restingRightPosition;
 
     public final double allowedError = 0.05;
 
-    public ElevatorSubsystem() {
+    public Elevator() {
         // init elevator
         isCalibrated = ElevatorStates.INITIALIZING;
-        position = ElevatorPositions.RESTING_POSITION;
+        position = ElevatorPosition.RESTING_POSITION;
         restingLeftPosition = (double) 0;
         restingRightPosition = (double) 0;
 
@@ -165,39 +166,43 @@ public class ElevatorSubsystem extends SubsystemBase {
         return rightEncoder.getPosition() * 42;
     }
 
-    public void setHeight(ElevatorPositions pos) {
+    public void setPosition(ElevatorPosition pos) {
         switch (pos) {
             case RESTING_POSITION -> {
                 // should trip limit switch
                 // resets and calibrates elevator
-                if (getLimitSwitch()) break; // elevator already is in resting position
+                if (restingLeftPosition == getLeftEncoder() && restingRightPosition == getRightEncoder()) break; // elevator already is in resting position
 
-                leftPID.setReference(-0.1, ControlType.kMAXMotionVelocityControl);
-
-                resetEncoders();
+                // leftPID.setReference(-0.1, ControlType.kMAXMotionVelocityControl);
+                position = ElevatorPosition.RESTING_POSITION;
             }
 
             case LEVEL_0 -> {
-                 // find height in inches
-
+                // find height in inches
+                position = ElevatorPosition.LEVEL_0;
             }
 
             case LEVEL_1 -> {
                 // find height in inches
-
+                position = ElevatorPosition.LEVEL_1;
             }
 
             case LEVEL_2 -> {
                 // find height in inches
-
+                position = ElevatorPosition.LEVEL_2;
+            }
+            case LEVEL_3 -> {
+                // find height in inches
+                position = ElevatorPosition.LEVEL_3;
             }
         }
     }
 
     public double getHeight() {
-        // TODO: implement
-        // return getLeftEncoder();
-        return 0;
+        // TODO: find scaling factor
+        double scalingFactor = 1; // converts ticks to inches
+
+        return (getLeftEncoder() - restingLeftPosition) * scalingFactor;
     }
 
     public boolean getLimitSwitch() {
@@ -213,14 +218,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
             // Reset encoder or position tracking
             resetEncoders();
-
+            System.out.println("Encoder resting values have been set");
+            System.out.println("Right Encoder Value: " + restingRightPosition + " Left Encoder Value: " + restingLeftPosition);
             // Mark as calibrated
             isCalibrated = ElevatorStates.INITIALIZED;
-        }
-
-        // Optional: If calibration hasn't completed, move the elevator down
-        if (isCalibrated == ElevatorStates.INITIALIZING) {
+        } else if (isCalibrated == ElevatorStates.INITIALIZING) {
             leftPID.setReference(-0.1, ControlType.kDutyCycle); // Move elevator slowly downward
+            rightPID.setReference(-0.1, ControlType.kDutyCycle);
         }
     }
 
