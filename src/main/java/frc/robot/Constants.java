@@ -20,10 +20,10 @@ public final class Constants {
     public static int rightBackMotorPort = 5;
 
     // elevator IDs
-    public static int elevatorRightMotorPort = 7;
-    public static int elevatorLeftMotorPort = 6;
-    public static int limitPort = 3;
-    public static int shooterPort = 8;
+    public static int elevatorRightMotorPort = 4;
+    public static int elevatorLeftMotorPort = 5;
+    public static int limitPort = 1;
+    public static int shooterPort = 2;
     // TODO: Configure motors/sensors for these ports
 
     // Configured these values in inches

@@ -22,7 +22,8 @@ public class JoystickCommand extends Command {
    */
   public JoystickCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
+    // addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
+    addRequirements(RobotContainer.drivetrain);
   }
 
   // Called when the command is initially scheduled.
@@ -42,25 +43,25 @@ public class JoystickCommand extends Command {
     if(RobotContainer.driveStick.getXButton()){
       // switches between fast and slow speed
       // Constants.slowMode = !Constants.slowMode;
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_3);
-      RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_3);
+      // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
     if(RobotContainer.driveStick.getYButton()){
       // shoots coral at bottom of reef (L0)
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
-      RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(RobotContainer.driveStick.getAButton()){
       // shoots coral at L1
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
-      RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
+      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(RobotContainer.driveStick.getBButton()){
       // shoots coral at L2
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
-      RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
-    RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
+    // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
 
     // Get the value of the left Y axis (left joystick vertical movement)
     double leftAxisValue = -RobotContainer.driveStick.getLeftY();
@@ -84,16 +85,16 @@ public class JoystickCommand extends Command {
     // RobotContainer.drivetrain.arcadeDrive(leftAxisValue, rightAxisValue);
 
     // Set the motor speeds
-    RobotContainer.drivetrain.setLeftSideMotorSpeed(leftSpeed);
-    RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
+    RobotContainer.drivetrain.setLeftSideMotorsSpeed(leftSpeed);
+    RobotContainer.drivetrain.setRightSideMotorsSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
 }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
-    RobotContainer.drivetrain.setRightSideMotorSpeed(0);
+    RobotContainer.drivetrain.setLeftSideMotorsSpeed(0);
+    RobotContainer.drivetrain.setRightSideMotorsSpeed(0);
     finished = false;
   }
 

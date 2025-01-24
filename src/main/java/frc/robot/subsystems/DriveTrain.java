@@ -12,7 +12,11 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -42,21 +46,25 @@ public class DriveTrain extends SubsystemBase {
     private final RelativeEncoder rightFrontEncoder;
     private final RelativeEncoder rightRearEncoder;
 
-    // SmartVelocity PID
-    private final double SmartVelocityP = 0.0002;
-    private final double SmartVelocityI = 0; // 0.00003
+    // SmartVelocity PID (MaxMotion)
+    private final double SmartVelocityP = 0.0002; // prev value: 0.0002
+    private final double SmartVelocityI = 0;
     private final double SmartVelocityD = 0;
     private final double SmartVelocityFF = 0;
 
+    // private DigitalInput pulseSensor = new DigitalInput(9);
+    // private Counter counter = new Counter(9);
+    private DutyCycle dutyCycle;
+
     // max motor speed
-    private final double MaxOutput = 1;
+    // private final double MaxOutput = 1; // unused
     // min motor speed
-    private final double MinOutput = -1;
+    // private final double MinOutput = -1; // unused
 
     // max motor acceleration
     private final double maxAccel = 1000000000;
-    private final int SmartMotionID = 0;
-    private int MaxMotionID = 1;
+    // private final int SmartMotionID = 0; // unused
+    // private int MaxMotionID = 1; // unused
     private final int maxVel = 4075;
 
     public final double allowedError = 0.05;
@@ -64,6 +72,11 @@ public class DriveTrain extends SubsystemBase {
     private final DifferentialDrive differentialDrive;
 
     public DriveTrain() {
+        // counter.setSemiPeriodMode(true);
+        // counter.reset();
+        DigitalInput input = new DigitalInput(9);
+        dutyCycle = new DutyCycle(input);
+
         // init motors
         leftFrontMotor = new SparkMax(Constants.leftFrontMotorPort, MotorType.kBrushless);
         leftRearMotor = new SparkMax(Constants.leftBackMotorPort, MotorType.kBrushless);
@@ -219,8 +232,10 @@ public class DriveTrain extends SubsystemBase {
         double speed = input * maxVel;
         SmartDashboard.putNumber("Speed of left side(rpm): ", speed);
         // Set rpm for left motors
-        leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
-        leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+        // leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        // leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        leftFrontMotor.set(speed);
+        leftRearMotor.set(speed);
     }
 
     /**
@@ -230,9 +245,12 @@ public class DriveTrain extends SubsystemBase {
         // calculate the necessary rpm
         double speed = input * maxVel;
         SmartDashboard.putNumber("Speed of right side(rpm): ", speed);
+        System.out.println("right speed: " + speed);
         // Set rpm for left motors
-        rightFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
-        rightRearPID.setReference(speed,ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+        // rightFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        // rightRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        rightFrontMotor.set(speed);
+        rightRearMotor.set(speed);
     }
 
     /**
@@ -246,27 +264,29 @@ public class DriveTrain extends SubsystemBase {
     /**
      * @param rotations percent output for robot
      */
-    public void setLeftSideMotorsPosition(double rotations) {
+    public void setLeftSideMotorsSpeed(double rotations) {
         // Controlling robot through percent output/motion control
-        leftFrontPID.setReference(rotations, ControlType.kDutyCycle);
-        leftRearPID.setReference(rotations, ControlType.kDutyCycle);
+        // System.out.println("rpm: " + rotations);
+        leftFrontPID.setReference(rotations, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+        leftRearPID.setReference(rotations, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
     }
 
     /**
      * @param rotations percent output for robot
      */
-    public void setRightSideMotorsPosition(double rotations) {
+    public void setRightSideMotorsSpeed(double rotations) {
         // Controlling robot through percent output/motion control
-        rightFrontPID.setReference(rotations, ControlType.kDutyCycle);
-        rightRearPID.setReference(rotations, ControlType.kDutyCycle);
+        // System.out.println("rpm: " + rotations);
+        rightFrontPID.setReference(rotations, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+        rightRearPID.setReference(rotations, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
     }
 
     /**
      * @param rotations percent output for robot motors
      */
     public void setAllMotorsPosition(double rotations) {
-        setLeftSideMotorsPosition(rotations);
-        setRightSideMotorsPosition(rotations);
+        setLeftSideMotorsSpeed(rotations);
+        setRightSideMotorsSpeed(rotations);
     }
 
     public void resetLeftSideEncoders() {
@@ -292,11 +312,16 @@ public class DriveTrain extends SubsystemBase {
      */
     public void arcadeDrive(double leftSpeed, double rightSpeed) {
         // Only use for practice training
-        differentialDrive.arcadeDrive(leftSpeed, rightSpeed);
+        // differentialDrive.arcadeDrive(leftSpeed, rightSpeed);
     }
 
     @Override
     public void periodic() {
         // Update odometry, smart dashboard, etc.
+        differentialDrive.feed();
+
+        // in cm
+        // System.out.println(counter.getPeriod() * 27272);
+        // System.out.println(dutyCycle.getOutput() * 100);
     }
 }
