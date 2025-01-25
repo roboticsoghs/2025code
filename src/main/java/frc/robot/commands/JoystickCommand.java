@@ -85,16 +85,16 @@ public class JoystickCommand extends Command {
     // RobotContainer.drivetrain.arcadeDrive(leftAxisValue, rightAxisValue);
 
     // Set the motor speeds
-    RobotContainer.drivetrain.setLeftSideMotorsSpeed(leftSpeed);
-    RobotContainer.drivetrain.setRightSideMotorsSpeed(rightSpeed);
+    RobotContainer.drivetrain.setLeftSideMotorSpeed(leftSpeed);
+    RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
 }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.drivetrain.setLeftSideMotorsSpeed(0);
-    RobotContainer.drivetrain.setRightSideMotorsSpeed(0);
+    RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
+    RobotContainer.drivetrain.setRightSideMotorSpeed(0);
     finished = false;
   }
 

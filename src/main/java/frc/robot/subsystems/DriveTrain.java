@@ -232,10 +232,10 @@ public class DriveTrain extends SubsystemBase {
         double speed = input * maxVel;
         SmartDashboard.putNumber("Speed of left side(rpm): ", speed);
         // Set rpm for left motors
-        // leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
-        // leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
-        leftFrontMotor.set(speed);
-        leftRearMotor.set(speed);
+        leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        // leftFrontMotor.set(speed);
+        // leftRearMotor.set(speed);
     }
 
     /**
@@ -247,10 +247,10 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putNumber("Speed of right side(rpm): ", speed);
         System.out.println("right speed: " + speed);
         // Set rpm for left motors
-        // rightFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
-        // rightRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
-        rightFrontMotor.set(speed);
-        rightRearMotor.set(speed);
+        rightFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        rightRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        // rightFrontMotor.set(speed);
+        // rightRearMotor.set(speed);
     }
 
     /**
@@ -264,29 +264,29 @@ public class DriveTrain extends SubsystemBase {
     /**
      * @param rotations percent output for robot
      */
-    public void setLeftSideMotorsSpeed(double rotations) {
+    public void setLeftSideMotorsPosition(double rotations) {
         // Controlling robot through percent output/motion control
         // System.out.println("rpm: " + rotations);
-        leftFrontPID.setReference(rotations, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
-        leftRearPID.setReference(rotations, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+        leftFrontPID.setReference(rotations, ControlType.kDutyCycle);
+        leftRearPID.setReference(rotations, ControlType.kDutyCycle);
     }
 
     /**
      * @param rotations percent output for robot
      */
-    public void setRightSideMotorsSpeed(double rotations) {
+    public void setRightSideMotorsPosition(double rotations) {
         // Controlling robot through percent output/motion control
         // System.out.println("rpm: " + rotations);
-        rightFrontPID.setReference(rotations, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
-        rightRearPID.setReference(rotations, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot1);
+        rightFrontPID.setReference(rotations, ControlType.kDutyCycle);
+        rightRearPID.setReference(rotations, ControlType.kDutyCycle);
     }
 
     /**
      * @param rotations percent output for robot motors
      */
     public void setAllMotorsPosition(double rotations) {
-        setLeftSideMotorsSpeed(rotations);
-        setRightSideMotorsSpeed(rotations);
+        setLeftSideMotorsPosition(rotations);
+        setRightSideMotorsPosition(rotations);
     }
 
     public void resetLeftSideEncoders() {
