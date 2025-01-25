@@ -85,8 +85,28 @@ public class JoystickCommand extends Command {
     // RobotContainer.drivetrain.arcadeDrive(leftAxisValue, rightAxisValue);
 
     // Set the motor speeds
-    RobotContainer.drivetrain.setLeftSideMotorSpeed(leftSpeed);
-    RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
+    int scalingConstant = 2;
+    
+    leftSpeed = Math.signum(leftSpeed) * (Math.log(1 + scalingConstant * Math.abs(leftSpeed)) / Math.log(1 + scalingConstant));
+    // rightSpeed = Math.signum(rightSpeed) * (Math.log(1 + scalingConstant * Math.abs(rightSpeed)) / Math.log(1 + scalingConstant));
+    double rightDriveTrainSpeed = leftSpeed;
+    double leftDriveTrainSpeed = leftSpeed;
+    if(rightSpeed > 0) {
+      if ((leftDriveTrainSpeed + rightSpeed) > 1) {
+        rightDriveTrainSpeed += rightSpeed;
+      } else {
+        leftDriveTrainSpeed -= rightSpeed;
+      }
+      leftDriveTrainSpeed -= rightSpeed;
+    } else {
+      if ((rightDriveTrainSpeed + rightSpeed) < -1) {
+        leftDriveTrainSpeed -= rightSpeed;
+      } else {
+        rightDriveTrainSpeed += rightSpeed;
+      }
+    }
+    RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
+    // RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
 }
 

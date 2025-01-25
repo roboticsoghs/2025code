@@ -231,6 +231,7 @@ public class DriveTrain extends SubsystemBase {
         // calculate the necessary rpm
         double speed = input * maxVel;
         SmartDashboard.putNumber("Speed of left side(rpm): ", speed);
+        System.out.println("right speed: " + speed);
         // Set rpm for left motors
         leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
         leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
@@ -247,8 +248,8 @@ public class DriveTrain extends SubsystemBase {
         SmartDashboard.putNumber("Speed of right side(rpm): ", speed);
         System.out.println("right speed: " + speed);
         // Set rpm for left motors
-        rightFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
-        rightRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        rightFrontPID.setReference(-speed, ControlType.kMAXMotionVelocityControl);
+        rightRearPID.setReference(-speed, ControlType.kMAXMotionVelocityControl);
         // rightFrontMotor.set(speed);
         // rightRearMotor.set(speed);
     }
@@ -256,9 +257,9 @@ public class DriveTrain extends SubsystemBase {
     /**
      * @param speed percent output for both motors
      */
-    public void setAllMotorsSpeed(double speed) {
-        setLeftSideMotorSpeed(speed);
-        setRightSideMotorSpeed(speed);
+    public void setAllMotorsSpeed(double leftSpeed, double rightSpeed) {
+        setLeftSideMotorSpeed(leftSpeed);
+        setRightSideMotorSpeed(rightSpeed);
     }
 
     /**
@@ -322,6 +323,6 @@ public class DriveTrain extends SubsystemBase {
 
         // in cm
         // System.out.println(counter.getPeriod() * 27272);
-        // System.out.println(dutyCycle.getOutput() * 100);
+        // System.out.println(4 * (dutyCycle.getOutput() - 1000));
     }
 }
