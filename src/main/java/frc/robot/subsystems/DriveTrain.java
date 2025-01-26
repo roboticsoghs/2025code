@@ -47,7 +47,7 @@ public class DriveTrain extends SubsystemBase {
     private final RelativeEncoder rightRearEncoder;
 
     // SmartVelocity PID (MaxMotion)
-    private final double SmartVelocityP = 0.0002; // prev value: 0.0002
+    private final double SmartVelocityP = 0.00011; // prev value: 0.0011
     private final double SmartVelocityI = 0;
     private final double SmartVelocityD = 0;
     private final double SmartVelocityFF = 0;

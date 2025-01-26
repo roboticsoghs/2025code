@@ -17,6 +17,9 @@ public class JoystickCommand extends Command {
   private double rightSpeed = 0;
   private boolean finished = false;
 
+  private double leftDriveTrainPrevSpeed;
+  private double rightDriveTrainPrevSpeed;
+
   /**
    * Creates a new Tankdrive.
    */
@@ -24,6 +27,9 @@ public class JoystickCommand extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
     addRequirements(RobotContainer.drivetrain);
+
+    leftDriveTrainPrevSpeed = 0;
+    rightDriveTrainPrevSpeed = 0;
   }
 
   // Called when the command is initially scheduled.
@@ -74,7 +80,7 @@ public class JoystickCommand extends Command {
     }
 
     // Get the value of the right Y axis (right joystick vertical movement)
-    double rightAxisValue = -RobotContainer.driveStick.getRightY();
+    double rightAxisValue = -RobotContainer.driveStick.getRightX();
     if (Math.abs(rightAxisValue) > 0.03) { // Apply a deadband
         rightSpeed = Constants.slowMode
                     ? Constants.slowModeMultipler * rightAxisValue
@@ -85,7 +91,7 @@ public class JoystickCommand extends Command {
     // RobotContainer.drivetrain.arcadeDrive(leftAxisValue, rightAxisValue);
 
     // Set the motor speeds
-    int scalingConstant = 2;
+    double scalingConstant = 0.8;
     
     leftSpeed = Math.signum(leftSpeed) * (Math.log(1 + scalingConstant * Math.abs(leftSpeed)) / Math.log(1 + scalingConstant));
     // rightSpeed = Math.signum(rightSpeed) * (Math.log(1 + scalingConstant * Math.abs(rightSpeed)) / Math.log(1 + scalingConstant));
@@ -93,22 +99,44 @@ public class JoystickCommand extends Command {
     double leftDriveTrainSpeed = leftSpeed;
     if(rightSpeed > 0) {
       if ((leftDriveTrainSpeed + rightSpeed) > 1) {
-        rightDriveTrainSpeed += rightSpeed;
-      } else {
         leftDriveTrainSpeed -= rightSpeed;
+      } else {
+        rightDriveTrainSpeed += rightSpeed;
       }
-      leftDriveTrainSpeed -= rightSpeed;
     } else {
       if ((rightDriveTrainSpeed + rightSpeed) < -1) {
-        leftDriveTrainSpeed -= rightSpeed;
-      } else {
         rightDriveTrainSpeed += rightSpeed;
+      } else {
+        leftDriveTrainSpeed -= rightSpeed;
       }
     }
-    RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
+
+    // leftDriveTrainSpeed = rateLimitMotors(leftDriveTrainSpeed, leftDriveTrainPrevSpeed);
+    // rightDriveTrainSpeed = rateLimitMotors(rightDriveTrainSpeed, rightDriveTrainPrevSpeed);
+    // double change = desiredSpeed - leftDriveTrainPrevSpeed;
+    // double MAX_CHANGE = 0.05;
+    // int intervals = (Math.abs(desiredSpeed - prevSpeed)) / 0.05;
+    // for(int i = 0; i < intervals; i++) {
+    //   if(!(i * MAX_CHANGE) + leftDriveTrainPrevSpeed > 0) {
+    //     rightDriveTrainSpeed = rightDriveTrainSpeed + MAX_CHANGE;
+    //   }
+      
+    // }
+    // leftDriveTrainPrevSpeed = leftDriveTrainSpeed;
+    // rightDriveTrainPrevSpeed = rightDriveTrainSpeed;
+
     // RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
+    RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
 }
+
+// private double rateLimitMotors(double desiredSpeed, double prevSpeed) {
+
+//   if (Math.abs(change) > MAX_CHANGE) {
+//     change = Math.signum(change) * MAX_CHANGE;
+//   }
+//   return prevSpeed + change;
+// }
 
   // Called once the command ends or is interrupted.
   @Override
