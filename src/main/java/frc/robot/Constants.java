@@ -16,12 +16,12 @@ public final class Constants {
     // drivetrain IDs
     public static int leftFrontMotorPort = 1;
     public static int leftBackMotorPort = 4;
-    public static int rightFrontMotorPort = 2;
-    public static int rightBackMotorPort = 5;
+    // public static int rightFrontMotorPort = 2;
+    // public static int rightBackMotorPort = 5;
 
     // elevator IDs
-    public static int elevatorRightMotorPort = 4;
-    public static int elevatorLeftMotorPort = 5;
+    public static int elevatorRightMotorPort = 2; // 4
+    public static int elevatorLeftMotorPort = 5; // 5
     public static int limitPort = 1;
     public static int shooterPort = 2;
     // TODO: Configure motors/sensors for these ports

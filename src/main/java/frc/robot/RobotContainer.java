@@ -26,8 +26,8 @@ public class RobotContainer {
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
   // initialize subsystems
-  public static final DriveTrain drivetrain = new DriveTrain();
-  // public static final Elevator elevator = new Elevator();
+  // public static final DriveTrain drivetrain = new DriveTrain();
+  public static final Elevator elevator = new Elevator();
   // public static final Shooter shooter = new Shooter();
   public static final XboxController driveStick = new XboxController(0);
 

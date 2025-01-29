@@ -17,19 +17,14 @@ public class JoystickCommand extends Command {
   private double rightSpeed = 0;
   private boolean finished = false;
 
-  private double leftDriveTrainPrevSpeed;
-  private double rightDriveTrainPrevSpeed;
-
   /**
    * Creates a new Tankdrive.
    */
   public JoystickCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
-    addRequirements(RobotContainer.drivetrain);
-
-    leftDriveTrainPrevSpeed = 0;
-    rightDriveTrainPrevSpeed = 0;
+    // addRequirements(RobotContainer.drivetrain);
+    addRequirements(RobotContainer.elevator);
   }
 
   // Called when the command is initially scheduled.
@@ -49,22 +44,22 @@ public class JoystickCommand extends Command {
     if(RobotContainer.driveStick.getXButton()){
       // switches between fast and slow speed
       // Constants.slowMode = !Constants.slowMode;
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_3);
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_3);
       // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
     if(RobotContainer.driveStick.getYButton()){
       // shoots coral at bottom of reef (L0)
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(RobotContainer.driveStick.getAButton()){
       // shoots coral at L1
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(RobotContainer.driveStick.getBButton()){
       // shoots coral at L2
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
@@ -100,49 +95,33 @@ public class JoystickCommand extends Command {
     if(rightSpeed > 0) {
       if ((leftDriveTrainSpeed + rightSpeed) > 1) {
         leftDriveTrainSpeed -= rightSpeed;
+      } else if((rightDriveTrainSpeed - rightSpeed) > 1) {
+        rightDriveTrainSpeed += (rightSpeed);
       } else {
-        rightDriveTrainSpeed += rightSpeed;
+        leftDriveTrainSpeed -= (rightSpeed / 2);
+        rightDriveTrainSpeed += (rightSpeed / 2);
       }
     } else {
       if ((rightDriveTrainSpeed + rightSpeed) < -1) {
         rightDriveTrainSpeed += rightSpeed;
-      } else {
+      } else if((leftDriveTrainSpeed - rightSpeed) > 1) { 
         leftDriveTrainSpeed -= rightSpeed;
+      } else {
+        leftDriveTrainSpeed -= (rightSpeed / 2);
+        rightDriveTrainSpeed += (rightSpeed / 2);
       }
     }
 
-    // leftDriveTrainSpeed = rateLimitMotors(leftDriveTrainSpeed, leftDriveTrainPrevSpeed);
-    // rightDriveTrainSpeed = rateLimitMotors(rightDriveTrainSpeed, rightDriveTrainPrevSpeed);
-    // double change = desiredSpeed - leftDriveTrainPrevSpeed;
-    // double MAX_CHANGE = 0.05;
-    // int intervals = (Math.abs(desiredSpeed - prevSpeed)) / 0.05;
-    // for(int i = 0; i < intervals; i++) {
-    //   if(!(i * MAX_CHANGE) + leftDriveTrainPrevSpeed > 0) {
-    //     rightDriveTrainSpeed = rightDriveTrainSpeed + MAX_CHANGE;
-    //   }
-      
-    // }
-    // leftDriveTrainPrevSpeed = leftDriveTrainSpeed;
-    // rightDriveTrainPrevSpeed = rightDriveTrainSpeed;
-
     // RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
-    RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
+    // RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
 }
-
-// private double rateLimitMotors(double desiredSpeed, double prevSpeed) {
-
-//   if (Math.abs(change) > MAX_CHANGE) {
-//     change = Math.signum(change) * MAX_CHANGE;
-//   }
-//   return prevSpeed + change;
-// }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
-    RobotContainer.drivetrain.setRightSideMotorSpeed(0);
+    // RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
+    // RobotContainer.drivetrain.setRightSideMotorSpeed(0);
     finished = false;
   }
 

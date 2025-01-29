@@ -53,8 +53,8 @@ public class DriveTrain extends SubsystemBase {
     private final double SmartVelocityFF = 0;
 
     // private DigitalInput pulseSensor = new DigitalInput(9);
-    // private Counter counter = new Counter(9);
-    private DutyCycle dutyCycle;
+    private Counter counter = new Counter(9);
+    // private DutyCycle dutyCycle;
 
     // max motor speed
     // private final double MaxOutput = 1; // unused
@@ -72,10 +72,10 @@ public class DriveTrain extends SubsystemBase {
     private final DifferentialDrive differentialDrive;
 
     public DriveTrain() {
-        // counter.setSemiPeriodMode(true);
-        // counter.reset();
-        DigitalInput input = new DigitalInput(9);
-        dutyCycle = new DutyCycle(input);
+        counter.setSemiPeriodMode(true);
+        counter.reset();
+        // DigitalInput input = new DigitalInput(9);
+        // dutyCycle = new DutyCycle(input);
 
         // init motors
         leftFrontMotor = new SparkMax(Constants.leftFrontMotorPort, MotorType.kBrushless);
@@ -322,7 +322,8 @@ public class DriveTrain extends SubsystemBase {
         differentialDrive.feed();
 
         // in cm
-        // System.out.println(counter.getPeriod() * 27272);
+        // System.out.println(counter.getPeriod());
+        SmartDashboard.putNumber("distance sensor: ", (counter.getPeriod() - 0.001) *1E+5);
         // System.out.println(4 * (dutyCycle.getOutput() - 1000));
     }
 }
