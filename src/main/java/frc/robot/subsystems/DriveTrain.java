@@ -12,7 +12,6 @@ import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -52,10 +51,6 @@ public class DriveTrain extends SubsystemBase {
     private final double SmartVelocityD = 0;
     private final double SmartVelocityFF = 0;
 
-    // private DigitalInput pulseSensor = new DigitalInput(9);
-    private Counter counter = new Counter(9);
-    // private DutyCycle dutyCycle;
-
     // max motor speed
     // private final double MaxOutput = 1; // unused
     // min motor speed
@@ -72,10 +67,6 @@ public class DriveTrain extends SubsystemBase {
     private final DifferentialDrive differentialDrive;
 
     public DriveTrain() {
-        counter.setSemiPeriodMode(true);
-        counter.reset();
-        // DigitalInput input = new DigitalInput(9);
-        // dutyCycle = new DutyCycle(input);
 
         // init motors
         leftFrontMotor = new SparkMax(Constants.leftFrontMotorPort, MotorType.kBrushless);
@@ -321,9 +312,7 @@ public class DriveTrain extends SubsystemBase {
         // Update odometry, smart dashboard, etc.
         differentialDrive.feed();
 
-        // in cm
-        // System.out.println(counter.getPeriod());
-        SmartDashboard.putNumber("distance sensor: ", (counter.getPeriod() - 0.001) *1E+5);
+
         // System.out.println(4 * (dutyCycle.getOutput() - 1000));
     }
 }

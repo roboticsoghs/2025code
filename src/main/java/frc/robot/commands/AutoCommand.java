@@ -10,20 +10,20 @@ public class AutoCommand extends Command {
 
     public AutoCommand() {
         this.finished = false;
-        addRequirements(RobotContainer.drivetrain);
+        // addRequirements(RobotContainer.drivetrain);
     }
 
     @Override
     public void execute() {
         // Get joystick values from Xbox controller
-        RobotContainer.drivetrain.setRightSideMotorSpeed(0.1);
+        // RobotContainer.drivetrain.setRightSideMotorSpeed(0.1);
     }
 
     @Override
     public void end(boolean interrupted) {
         // Stop the robot when the command ends
-        RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
-        RobotContainer.drivetrain.setRightSideMotorSpeed(0);
+        // RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
+        // RobotContainer.drivetrain.setRightSideMotorSpeed(0);
         finished = true;
     }
 

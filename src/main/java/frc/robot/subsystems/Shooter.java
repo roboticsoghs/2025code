@@ -13,19 +13,23 @@ import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
-
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
     private final SparkMax motor;
-
+    DigitalInput limitSwitch = new DigitalInput(Constants.limitCoralPort);
     // motor configs
     private final SparkMaxConfig config;
 
     // motor PID controllers
     private final SparkClosedLoopController PID;
 
+    private Counter counter = new Counter(8);
     // motor encoders
     private final RelativeEncoder Encoder;
     // SmartVelocity PID
@@ -45,13 +49,17 @@ public class Shooter extends SubsystemBase {
     private int MaxMotionID = 1;
     private final int maxVel = 4075;
 
+    private boolean isLoaded;
     // elevator
     private double restingPosition;
 
     public final double allowedError = 0.05;
 
     public Shooter() {
+        counter.setSemiPeriodMode(true);
+        counter.reset();
 
+        isLoaded = false;
         // init motors
         motor = new SparkMax(Constants.shooterPort, MotorType.kBrushless);
 
@@ -90,6 +98,10 @@ public class Shooter extends SubsystemBase {
         config.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
     }
 
+    private boolean getLimitSwitch() {
+        return !limitSwitch.get();
+    }
+
     /**
      * @return position in ticks
      */
@@ -97,13 +109,33 @@ public class Shooter extends SubsystemBase {
         return Encoder.getPosition() * 42;
     }
 
-    public void shoot_that_fucker(double x_dist) {
-        // Shoot coral at 20% speed
-        double radianConstant = Math.toRadians(35);
-        double t = (-1) * x_dist / Math.sin(radianConstant);
-        double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
-        double yInch = y_diff * 39.37;
+    public void shoot_that_fucker() {
+        if(isLoaded) {
+            
+            double x_dist = getReefDistance();
+            // Shoot coral at 20% speed
+            double radianConstant = Math.toRadians(35);
+            double t = (-1) * x_dist / Math.sin(radianConstant);
+            double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
+            double yInch = y_diff * 39.37;
 
-        PID.setReference(0.2, ControlType.kDutyCycle);
+            PID.setReference(0.2, ControlType.kDutyCycle);
+            isLoaded = false;
+        }
+    }
+
+    public void periodic() {
+        if(getLimitSwitch()) {
+            isLoaded = true;
+        } else {
+            isLoaded = false;
+        }
+        SmartDashboard.putBoolean("coral outtake: ", isLoaded);
+        SmartDashboard.putNumber("distance sensor: ", getreefDistance());
+    }
+
+    private double getreefDistance() {
+        // in cm
+        return ((counter.getPeriod() - 0.001) *1E+5 * 3.61) + 2;
     }
 }

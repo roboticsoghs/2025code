@@ -16,13 +16,14 @@ public final class Constants {
     // drivetrain IDs
     public static int leftFrontMotorPort = 1;
     public static int leftBackMotorPort = 4;
-    // public static int rightFrontMotorPort = 2;
-    // public static int rightBackMotorPort = 5;
+    public static int rightFrontMotorPort = 2;
+    public static int rightBackMotorPort = 5;
 
     // elevator IDs
-    public static int elevatorRightMotorPort = 2; // 4
-    public static int elevatorLeftMotorPort = 5; // 5
-    public static int limitPort = 1;
+    public static int elevatorRightMotorPort = 6;
+    public static int elevatorLeftMotorPort = 7;
+    public static int limitPort = 9;
+    public static int limitCoralPort = 8;
     public static int shooterPort = 2;
     // TODO: Configure motors/sensors for these ports
 
@@ -32,9 +33,12 @@ public final class Constants {
     public static int LEVEL_2_HEIGHT = 8;
     public static int LEVEL_3_HEIGHT = 8;
 
+    public static int UPPER_HARD_LIMIT = 100;
+    public static int UPPER_LOWER_LIMIT = 0;
+
     // general
-    public static double gearRatio = 10.86;
-    public static double wheelRadius = 3;
+    public static double gearRatio = 12; // 8.714
+    public static double wheelRadius = 0.875;
     public static int encoderTicksPerRotation = 42;
 
     public static boolean slowMode = false;
