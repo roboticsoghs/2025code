@@ -60,7 +60,7 @@ public class DriveTrain extends SubsystemBase {
     private final double maxAccel = 1000000000;
     // private final int SmartMotionID = 0; // unused
     // private int MaxMotionID = 1; // unused
-    private final int maxVel = 4075;
+    private final int maxVel = 4540;
 
     public final double allowedError = 0.05;
 

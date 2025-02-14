@@ -34,18 +34,22 @@ public class GyroSubsystem extends SubsystemBase {
         // 
         double angle = Math.round(gyro.getAngle());
         String direction = "";
-        switch (angle % 4) {
+        switch ((int)angle % 4) {
             case 0:
                 direction = "North";
+                break;
             case 1:
                 direction = "West";
+                break;
             case 2:
                 direction = "South";
+                break;
             case 3:
                 direction = "East";
+                break;
             default:
                 break;
         }
-        SmartDashboard.putNumber("angle: ", );
+        SmartDashboard.putString("angle: ", direction);
     }
 }

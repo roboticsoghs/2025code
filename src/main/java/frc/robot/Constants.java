@@ -24,8 +24,7 @@ public final class Constants {
     public static int elevatorLeftMotorPort = 7;
     public static int limitPort = 9;
     public static int limitCoralPort = 8;
-    public static int shooterPort = 2;
-    // TODO: Configure motors/sensors for these ports
+    public static int shooterPort = 2; // TODO: configure port
 
     // Configured these values in inches
     public static int LEVEL_0_HEIGHT = 8;
@@ -33,8 +32,8 @@ public final class Constants {
     public static int LEVEL_2_HEIGHT = 8;
     public static int LEVEL_3_HEIGHT = 8;
 
-    public static int UPPER_HARD_LIMIT = 100;
-    public static int UPPER_LOWER_LIMIT = 0;
+    public static int UPPER_HARD_LIMIT = 49;
+    public static int UPPER_LOWER_LIMIT = -1;
 
     // general
     public static double gearRatio = 12; // 8.714

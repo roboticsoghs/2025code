@@ -29,7 +29,7 @@ public class Shooter extends SubsystemBase {
     // motor PID controllers
     private final SparkClosedLoopController PID;
 
-    private Counter counter = new Counter(8);
+    // private Counter counter = new Counter(Constants.LimitCoralPort);
     // motor encoders
     private final RelativeEncoder Encoder;
     // SmartVelocity PID
@@ -56,8 +56,8 @@ public class Shooter extends SubsystemBase {
     public final double allowedError = 0.05;
 
     public Shooter() {
-        counter.setSemiPeriodMode(true);
-        counter.reset();
+        // counter.setSemiPeriodMode(true);
+        // counter.reset();
 
         isLoaded = false;
         // init motors
@@ -112,7 +112,7 @@ public class Shooter extends SubsystemBase {
     public void shoot_that_fucker() {
         if(isLoaded) {
             
-            double x_dist = getReefDistance();
+            double x_dist = getreefDistance();
             // Shoot coral at 20% speed
             double radianConstant = Math.toRadians(35);
             double t = (-1) * x_dist / Math.sin(radianConstant);
@@ -124,18 +124,20 @@ public class Shooter extends SubsystemBase {
         }
     }
 
+    @Override
     public void periodic() {
-        if(getLimitSwitch()) {
-            isLoaded = true;
-        } else {
-            isLoaded = false;
-        }
-        SmartDashboard.putBoolean("coral outtake: ", isLoaded);
-        SmartDashboard.putNumber("distance sensor: ", getreefDistance());
+        // if(getLimitSwitch()) {
+        //     isLoaded = true;
+        // } else {
+        //     isLoaded = false;
+        // }
+        // SmartDashboard.putBoolean("coral outtake: ", isLoaded);
+        // SmartDashboard.putNumber("distance sensor: ", getreefDistance());
     }
 
     private double getreefDistance() {
         // in cm
-        return ((counter.getPeriod() - 0.001) *1E+5 * 3.61) + 2;
+        // return ((counter.getPeriod() - 0.001) *1E+5 * 3.61) + 2;
+        return 0;
     }
 }
