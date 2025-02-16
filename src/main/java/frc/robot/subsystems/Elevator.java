@@ -177,7 +177,7 @@ public class Elevator extends SubsystemBase {
 
     public void setPosition(ElevatorPosition pos) {
         if(isCalibrated.getStatusMessage() != "INITIALIZED") return;
-        if(limitCheck()) {
+        if(limitCheck(pos.getValue())) {
             switch (pos) {
                 case RESTING_POSITION -> {
                     // should trip limit switch
@@ -240,12 +240,12 @@ public class Elevator extends SubsystemBase {
         }
     }
 
-    public boolean limitCheck() {
+    public boolean limitCheck(double rotations) {
         return rotations > Constants.UPPER_LOWER_LIMIT && rotations < Constants.UPPER_HARD_LIMIT;
     }
 
     public void moveRotation(double rotations) {
-        if(limitCheck()) {
+        if(limitCheck(rotations)) {
             leftPID.setReference(encoderValue + rotations, ControlType.kMAXMotionPositionControl);
             SmartDashboard.putNumber("target pos: ", encoderValue + rotations);
         }

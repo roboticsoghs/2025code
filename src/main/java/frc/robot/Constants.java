@@ -24,7 +24,7 @@ public final class Constants {
     public static int elevatorLeftMotorPort = 7;
     public static int limitPort = 9;
     public static int limitCoralPort = 8;
-    public static int shooterPort = 2; // TODO: configure port
+    public static int shooterPort = 10;
 
     // Configured these values in inches
     public static int LEVEL_0_HEIGHT = 8;

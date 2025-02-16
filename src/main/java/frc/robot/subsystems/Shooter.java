@@ -109,19 +109,21 @@ public class Shooter extends SubsystemBase {
         return Encoder.getPosition() * 42;
     }
 
-    public void shoot_that_fucker() {
-        if(isLoaded) {
+    public void shoot_that_fucker(double speed) {
+        // if(isLoaded) {
             
-            double x_dist = getreefDistance();
-            // Shoot coral at 20% speed
-            double radianConstant = Math.toRadians(35);
-            double t = (-1) * x_dist / Math.sin(radianConstant);
-            double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
-            double yInch = y_diff * 39.37;
+        //     double x_dist = getreefDistance();
+        //     // Shoot coral at 20% speed
+        //     double radianConstant = Math.toRadians(35);
+        //     double t = (-1) * x_dist / Math.sin(radianConstant);
+        //     double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
+        //     double yInch = y_diff * 39.37;
 
-            PID.setReference(0.2, ControlType.kDutyCycle);
-            isLoaded = false;
-        }
+        //     PID.setReference(0.2, ControlType.kDutyCycle);
+        //     isLoaded = false;
+        // }
+
+        PID.setReference(speed, ControlType.kDutyCycle);
     }
 
     @Override

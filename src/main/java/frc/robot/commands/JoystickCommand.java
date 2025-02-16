@@ -20,7 +20,6 @@ public class JoystickCommand extends Command {
   // private final POVButton dpadRight = new POVButton(driveStick, 90);
   // private final POVButton dpadDown = new POVButton(RobotContainer.driveStick, 180);
   // private final POVButton dpadLeft = new POVButton(driveStick, 270);
-  private double rightTriggerValue = RobotContainer.driveStick.getRightTriggerAxis();
 
   /**
    * Creates a new Tankdrive.
@@ -28,8 +27,9 @@ public class JoystickCommand extends Command {
   public JoystickCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
-    // addRequirements(RobotContainer.drivetrain);
-    addRequirements(RobotContainer.elevator);
+    // addRequirements(RobotContainer.drivetrain, RobotContainer.shooter);
+    addRequirements(RobotContainer.drivetrain);
+    // addRequirements(RobotContainer.elevator);
   }
 
   // Called when the command is initially scheduled.
@@ -49,35 +49,38 @@ public class JoystickCommand extends Command {
     if(RobotContainer.driveStick.getXButton()){
       // switches between fast and slow speed
       // Constants.slowMode = !Constants.slowMode;
-      RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
+      // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
       // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
     if(RobotContainer.driveStick.getYButton()){
       // shoots coral at bottom of reef (L0)
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(RobotContainer.driveStick.getAButton()){
       // shoots coral at L1
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(RobotContainer.driveStick.getBButton()){
       // shoots coral at L2
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
         // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
-    if (rightTriggerValue > 0.5) {
-      handleRightTriggerPressed();
-    }
+    // if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
+    //   handleRightTriggerPressed(0.15);
+    // }
+    // if (RobotContainer.driveStick.getRightTriggerAxis() < 0.5) {
+    //   handleRightTriggerPressed(0);
+    // }
 
-    switch(RobotContainer.driveStick.getPOV()) {
-      case 0:
-        handleUp();
-      case 180:
-        handleDown();
-    }
+    // switch(RobotContainer.driveStick.getPOV()) {
+    //   case 0:
+    //     handleUp();
+    //   case 180:
+    //     handleDown();
+    // }
 
     // dpadUp.whenPressed(() -> handleUp());
     // dpadDown.whenPressed(() -> handleDown()); 
@@ -134,22 +137,22 @@ public class JoystickCommand extends Command {
 
     // RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
-    // RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
+    RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
 }
 
-  private void handleRightTriggerPressed() {
-    RobotContainer.shooter.shoot_that_fucker();
-  }
+  // private void handleRightTriggerPressed(double speed) {
+    // RobotContainer.shooter.shoot_that_fucker(speed);
+  // }
 
-  private void handleUp() {
-    double encoder = Math.abs(RobotContainer.elevator.getLeftEncoder());
-    RobotContainer.elevator.moveRotation(1.0);
-  }
+  // private void handleUp() {
+  //   double encoder = Math.abs(RobotContainer.elevator.getLeftEncoder());
+  //   RobotContainer.elevator.moveRotation(1.0);
+  // }
 
-  private void handleDown() {
-    double encoder = Math.abs(RobotContainer.elevator.getLeftEncoder());
-    RobotContainer.elevator.moveRotation(-1.0);
-  }
+  // private void handleDown() {
+  //   double encoder = Math.abs(RobotContainer.elevator.getLeftEncoder());
+  //   RobotContainer.elevator.moveRotation(-1.0);
+  // }
 
   // Called once the command ends or is interrupted.
   @Override
