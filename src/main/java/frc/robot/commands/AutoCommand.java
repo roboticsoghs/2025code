@@ -4,13 +4,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 
 public class AutoCommand extends Command {
-    private int leftSpeed;
-    private int rightSpeed;
     private boolean finished = false;
 
     public AutoCommand() {
         this.finished = false;
-        // addRequirements(RobotContainer.drivetrain);
+        addRequirements(RobotContainer.drivetrain, RobotContainer.elevator, RobotContainer.shooter, RobotContainer.visionSystem);
     }
 
     @Override

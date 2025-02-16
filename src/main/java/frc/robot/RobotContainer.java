@@ -12,6 +12,7 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,9 +28,10 @@ public class RobotContainer {
 
   // initialize subsystems
   public static final DriveTrain drivetrain = new DriveTrain();
-  // public static final Elevator elevator = new Elevator();
-  // public static final Shooter shooter = new Shooter();
+  public static final Elevator elevator = new Elevator();
+  public static final Shooter shooter = new Shooter();
   public static final XboxController driveStick = new XboxController(0);
+  public static final Vision visionSystem = new Vision();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
