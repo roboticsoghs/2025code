@@ -13,27 +13,50 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    // drivetrain IDs
     public static int leftFrontMotorPort = 1;
     public static int leftBackMotorPort = 4;
-    public static int rightFrontMotorPort = 2; 
-    public static int rightBackMotorPort = 5; 
-    public static double gearRatio = 10.86;
-    public static double wheelRadius = 3;
+    public static int rightFrontMotorPort = 2;
+    public static int rightBackMotorPort = 5;
 
-    
-    public static boolean slowMode = false; 
+    // elevator IDs
+    public static int elevatorRightMotorPort = 6;
+    public static int elevatorLeftMotorPort = 7;
+    public static int limitPort = 9;
+    public static int limitCoralPort = 8;
+    public static int shooterPort = 10;
+
+    // Configured these values in inches
+    public static int LEVEL_0_HEIGHT = 8;
+    public static int LEVEL_1_HEIGHT = 8;
+    public static int LEVEL_2_HEIGHT = 8;
+    public static int LEVEL_3_HEIGHT = 8;
+
+    public static int UPPER_HARD_LIMIT = 49;
+    public static int UPPER_LOWER_LIMIT = -1;
+
+    // general
+    public static double gearRatio = 12; // 8.714
+    public static double wheelRadius = 0.875;
+    public static int encoderTicksPerRotation = 42;
+
+    public static boolean slowMode = false;
     public static double slowModeMultipler = 0.3;
+
     /**
      * Determines the number of encoder ticks necessary for drivetrain to turn at certain angle
      * @param angle the angle to turn
-     * @return number of encoder ticks for the each side of the drivetrain to turn 
+     * @return number of encoder ticks for the each side of the drivetrain to turn
      */
     public static double rotateX(double angle){
       double encoderTicks = ((13/90)* angle);
       return encoderTicks;
     }
 
-    public static final double allowedError = 0.05;
-    public static final int leftAxis = 1;
-    public static final int rightAxis = 5;
+    // allowed error for motors
+    public static double allowedError = 0.05;
+
+    // other values
+    public static int leftAxis = 1;
+    public static int rightAxis = 5;
 }

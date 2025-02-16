@@ -1,31 +1,27 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
-import edu.wpi.first.wpilibj.XboxController;
 
-public class DriveCommand extends Command {
-    private int leftSpeed;
-    private int rightSpeed;
+public class AutoCommand extends Command {
     private boolean finished = false;
 
-    public DriveCommand() {
+    public AutoCommand() {
         this.finished = false;
-        addRequirements(RobotContainer.drivetrain);
+        addRequirements(RobotContainer.drivetrain, RobotContainer.elevator, RobotContainer.shooter, RobotContainer.visionSystem);
     }
 
     @Override
     public void execute() {
         // Get joystick values from Xbox controller
-        
+        // RobotContainer.drivetrain.setRightSideMotorSpeed(0.1);
     }
 
     @Override
     public void end(boolean interrupted) {
         // Stop the robot when the command ends
-        RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
-        RobotContainer.drivetrain.setRightSideMotorSpeed(0);
+        // RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
+        // RobotContainer.drivetrain.setRightSideMotorSpeed(0);
         finished = true;
     }
 

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
+/* Copyright (c) 2025 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,22 +7,29 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Elevator.ElevatorPosition;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 public class JoystickCommand extends Command {
   private double leftSpeed = 0;
   private double rightSpeed = 0;
   private boolean finished = false;
+  // private final POVButton dpadRight = new POVButton(driveStick, 90);
+  // private final POVButton dpadDown = new POVButton(RobotContainer.driveStick, 180);
+  // private final POVButton dpadLeft = new POVButton(driveStick, 270);
 
   /**
    * Creates a new Tankdrive.
    */
   public JoystickCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
+    // addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
+    // addRequirements(RobotContainer.drivetrain, RobotContainer.shooter);
     addRequirements(RobotContainer.drivetrain);
+    // addRequirements(RobotContainer.elevator);
   }
 
   // Called when the command is initially scheduled.
@@ -38,42 +45,120 @@ public class JoystickCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // X, A, B, Y
     if(RobotContainer.driveStick.getXButton()){
-      Constants.slowMode = !Constants.slowMode;
+      // switches between fast and slow speed
+      // Constants.slowMode = !Constants.slowMode;
+      // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
+      // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
-    
-        // Get the value of the left Y axis (left joystick vertical movement)
+    if(RobotContainer.driveStick.getYButton()){
+      // shoots coral at bottom of reef (L0)
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+    }
+    if(RobotContainer.driveStick.getAButton()){
+      // shoots coral at L1
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
+      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+    }
+    if(RobotContainer.driveStick.getBButton()){
+      // shoots coral at L2
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+    }
+        // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
+    // if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
+    //   handleRightTriggerPressed(0.15);
+    // }
+    // if (RobotContainer.driveStick.getRightTriggerAxis() < 0.5) {
+    //   handleRightTriggerPressed(0);
+    // }
+
+    // switch(RobotContainer.driveStick.getPOV()) {
+    //   case 0:
+    //     handleUp();
+    //   case 180:
+    //     handleDown();
+    // }
+
+    // dpadUp.whenPressed(() -> handleUp());
+    // dpadDown.whenPressed(() -> handleDown()); 
+
+
+    // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
+
+    // Get the value of the left Y axis (left joystick vertical movement)
     double leftAxisValue = -RobotContainer.driveStick.getLeftY();
     if (Math.abs(leftAxisValue) > 0.03) { // Apply a deadband
-        leftSpeed = Constants.slowMode 
-                    ? Constants.slowModeMultipler * leftAxisValue 
+        leftSpeed = Constants.slowMode
+                    ? Constants.slowModeMultipler * leftAxisValue
                     : leftAxisValue;
     } else {
         leftSpeed = 0;
     }
 
     // Get the value of the right Y axis (right joystick vertical movement)
-    double rightAxisValue = -RobotContainer.driveStick.getRightY();
+    double rightAxisValue = -RobotContainer.driveStick.getRightX();
     if (Math.abs(rightAxisValue) > 0.03) { // Apply a deadband
-        rightSpeed = Constants.slowMode 
-                    ? Constants.slowModeMultipler * rightAxisValue 
+        rightSpeed = Constants.slowMode
+                    ? Constants.slowModeMultipler * rightAxisValue
                     : rightAxisValue;
     } else {
         rightSpeed = 0;
     }
-    // RobotContainer.drivetrain.arcadeDrive(leftAxisValue, rightAxisValue);
+
+    // Set the motor speeds
+    double scalingConstant = 0.8;
     
-        // Set the motor speeds
-    RobotContainer.drivetrain.setLeftSideMotorSpeed(leftSpeed);
-    RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
+    leftSpeed = Math.signum(leftSpeed) * (Math.log(1 + scalingConstant * Math.abs(leftSpeed)) / Math.log(1 + scalingConstant));
+    // rightSpeed = Math.signum(rightSpeed) * (Math.log(1 + scalingConstant * Math.abs(rightSpeed)) / Math.log(1 + scalingConstant));
+    double rightDriveTrainSpeed = leftSpeed;
+    double leftDriveTrainSpeed = leftSpeed;
+    if(rightSpeed > 0) {
+      if ((leftDriveTrainSpeed + rightSpeed) > 1) {
+        leftDriveTrainSpeed -= rightSpeed;
+      } else if((rightDriveTrainSpeed - rightSpeed) > 1) {
+        rightDriveTrainSpeed += (rightSpeed);
+      } else {
+        leftDriveTrainSpeed -= (rightSpeed / 2);
+        rightDriveTrainSpeed += (rightSpeed / 2);
+      }
+    } else {
+      if ((rightDriveTrainSpeed + rightSpeed) < -1) {
+        rightDriveTrainSpeed += rightSpeed;
+      } else if((leftDriveTrainSpeed - rightSpeed) > 1) { 
+        leftDriveTrainSpeed -= rightSpeed;
+      } else {
+        leftDriveTrainSpeed -= (rightSpeed / 2);
+        rightDriveTrainSpeed += (rightSpeed / 2);
+      }
+    }
+
+    // RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
+    RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
 }
+
+  // private void handleRightTriggerPressed(double speed) {
+    // RobotContainer.shooter.shoot_that_fucker(speed);
+  // }
+
+  // private void handleUp() {
+  //   double encoder = Math.abs(RobotContainer.elevator.getLeftEncoder());
+  //   RobotContainer.elevator.moveRotation(1.0);
+  // }
+
+  // private void handleDown() {
+  //   double encoder = Math.abs(RobotContainer.elevator.getLeftEncoder());
+  //   RobotContainer.elevator.moveRotation(-1.0);
+  // }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
-    RobotContainer.drivetrain.setRightSideMotorSpeed(0);
+    // RobotContainer.drivetrain.setLeftSideMotorSpeed(0);
+    // RobotContainer.drivetrain.setRightSideMotorSpeed(0);
     finished = false;
   }
 

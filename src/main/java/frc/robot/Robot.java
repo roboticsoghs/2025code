@@ -6,9 +6,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.DriveCommand;
+import frc.robot.commands.AutoCommand;
 import frc.robot.commands.JoystickCommand;
 
 
@@ -19,7 +18,8 @@ import frc.robot.commands.JoystickCommand;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command m_autonomousCommand;
+  // Instantiate Command Classes
+  private AutoCommand m_autonomousCommand;
   JoystickCommand m_Teleop;
   private RobotContainer m_robotContainer;
 
@@ -60,17 +60,17 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    // schedule the autonomous command (example)
+    // schedule the autonomous command
     if (m_autonomousCommand != null) {
-      m_autonomousCommand = new DriveCommand();
+      m_autonomousCommand = new AutoCommand();
     }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    // Continously run periodic
     m_autonomousCommand.execute();
   }
 
