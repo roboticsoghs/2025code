@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
@@ -13,6 +15,7 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
+import frc.robot.Constants;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -28,10 +31,14 @@ public class RobotContainer {
 
   // initialize subsystems
   public static final DriveTrain drivetrain = new DriveTrain();
-  public static final Elevator elevator = new Elevator();
-  public static final Shooter shooter = new Shooter();
+  // public static final Elevator elevator = new Elevator();
+  // public static final Shooter shooter = new Shooter();
   public static final XboxController driveStick = new XboxController(0);
-  public static final Vision visionSystem = new Vision();
+  public static final Joystick m_operator = new Joystick(1);
+  // public static final Vision visionSystem = new Vision();
+
+  // operator board buttons
+  public static JoystickButton intakeButton = new JoystickButton(m_operator, Constants.INTAKE_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

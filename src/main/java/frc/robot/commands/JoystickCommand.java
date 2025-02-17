@@ -12,11 +12,14 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class JoystickCommand extends Command {
   private double leftSpeed = 0;
   private double rightSpeed = 0;
+  private boolean slowModeMultiplier = false;
   private boolean finished = false;
+  private double throttleValue;
   // private final POVButton dpadRight = new POVButton(driveStick, 90);
   // private final POVButton dpadDown = new POVButton(RobotContainer.driveStick, 180);
   // private final POVButton dpadLeft = new POVButton(driveStick, 270);
@@ -29,6 +32,8 @@ public class JoystickCommand extends Command {
     // addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
     // addRequirements(RobotContainer.drivetrain, RobotContainer.shooter);
     addRequirements(RobotContainer.drivetrain);
+    throttleValue = 0;
+    slowModeMultiplier = false;
     // addRequirements(RobotContainer.elevator);
   }
 
@@ -45,24 +50,43 @@ public class JoystickCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if(Robotcontainer.intakeButton.getAsBoolean()) {
+      slowModeMultiplier = !slowModeMultiplier;
+    }
+    SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
     // X, A, B, Y
-    if(RobotContainer.driveStick.getXButton()){
+    if(RobotContainer.m_operator.isConnected()){
       // switches between fast and slow speed
+      throttleValue = RobotContainer.m_operator.getRawAxis(6);
+      SmartDashboard.putNumber("op board 6: ", throttleValue);
       // Constants.slowMode = !Constants.slowMode;
       // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
       // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
-    if(RobotContainer.driveStick.getYButton()){
+    if(throttleValue == -1){
+      // rest
       // shoots coral at bottom of reef (L0)
       // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
-    if(RobotContainer.driveStick.getAButton()){
+    if(throttleValue <= -0.8 && throttleValue >= -0.9){
+      // L0
       // shoots coral at L1
       // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
-    if(RobotContainer.driveStick.getBButton()){
+    if(throttleValue <= -0.7 && throttleValue >= -0.8){
+      // L1
+      // shoots coral at L2
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+    }
+    if(throttleValue <= -0.6 && throttleValue >= -0.7){
+      // shoots coral at L2
+      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+    }
+    if(throttleValue <= -0.5 && throttleValue >= -0.6){
       // shoots coral at L2
       // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
@@ -82,11 +106,6 @@ public class JoystickCommand extends Command {
     //     handleDown();
     // }
 
-    // dpadUp.whenPressed(() -> handleUp());
-    // dpadDown.whenPressed(() -> handleDown()); 
-
-
-    // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
 
     // Get the value of the left Y axis (left joystick vertical movement)
     double leftAxisValue = -RobotContainer.driveStick.getLeftY();
@@ -137,7 +156,11 @@ public class JoystickCommand extends Command {
 
     // RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
-    RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
+    if(slowModeMultiplier) {
+      RobotContainer.drivetrain.setAllMotorsSpeed(0.8 * leftDriveTrainSpeed, 0.8 * rightDriveTrainSpeed);
+    else {
+      RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
+    }
 }
 
   // private void handleRightTriggerPressed(double speed) {

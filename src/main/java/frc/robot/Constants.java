@@ -35,6 +35,9 @@ public final class Constants {
     public static int UPPER_HARD_LIMIT = 49;
     public static int UPPER_LOWER_LIMIT = -1;
 
+    // operator board
+    public static int INTAKE_PORT = 8;
+
     // general
     public static double gearRatio = 12; // 8.714
     public static double wheelRadius = 0.875;

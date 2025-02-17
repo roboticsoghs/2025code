@@ -28,6 +28,7 @@ public class Elevator extends SubsystemBase {
         // position value is in revolutions relative to RESTING_POSITION
         // TODO: figure out revolutions of the motor needed for each level
         RESTING_POSITION(0),
+        INTAKE_POSITION(0), // TODO:
         LEVEL_0(5),
         LEVEL_1(10),
         LEVEL_2(15),
@@ -179,17 +180,16 @@ public class Elevator extends SubsystemBase {
         if(isCalibrated.getStatusMessage() != "INITIALIZED") return;
         if(limitCheck(pos.getValue())) {
             switch (pos) {
+                case INTAKE_POSITION -> {
+                    position = ElevatorPosition.INTAKE_POSITION;
+                    leftPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
+                    // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
+                    // rightPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl);
+                    SmartDashboard.putNumber("elevator revs: ", position.getValue());
+                    position = ElevatorPosition.INTAKE_POSITION;
+                }
+
                 case RESTING_POSITION -> {
-                    // should trip limit switch
-                    // resets and calibrates elevator
-                    if (0 == getLeftEncoder() && 0 == getRightEncoder()) break; // elevator already is in resting position
-
-                    // leftPID.setReference(-0.1, ControlType.kMAXMotionVelocityControl);
-                    // if (position == ElevatorPosition.RESTING_POSITION) break; // already at resting position
-                    // else if (position == ElevatorPosition.LEVEL_0) {
-                    //     // send elevator from L0 to RESTING
-
-                    // }
                     position = ElevatorPosition.RESTING_POSITION;
                     leftPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
                     // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
@@ -199,7 +199,6 @@ public class Elevator extends SubsystemBase {
                 }
 
                 case LEVEL_0 -> {
-                    // find height in inches
                     position = ElevatorPosition.LEVEL_0;
                     leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
                     // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl);
