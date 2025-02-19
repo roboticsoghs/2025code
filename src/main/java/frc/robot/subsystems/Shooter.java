@@ -50,6 +50,7 @@ public class Shooter extends SubsystemBase {
     private final int maxVel = 4075;
 
     private boolean isLoaded;
+    private boolean intakingLoad;
     // elevator
     private double restingPosition;
 
@@ -60,6 +61,7 @@ public class Shooter extends SubsystemBase {
         // counter.reset();
 
         isLoaded = false;
+        intakingLoad = false;
         // init motors
         motor = new SparkMax(Constants.shooterPort, MotorType.kBrushless);
 
@@ -110,36 +112,50 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shoot_that_fucker(double speed) {
-        // if(isLoaded) {
+        if(isLoaded) {
             
-        //     double x_dist = getreefDistance();
-        //     // Shoot coral at 20% speed
-        //     double radianConstant = Math.toRadians(35);
-        //     double t = (-1) * x_dist / Math.sin(radianConstant);
-        //     double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
-        //     double yInch = y_diff * 39.37;
+            double x_dist = getreefDistance();
+            // Shoot coral at 20% speed
+            double radianConstant = Math.toRadians(35);
+            double t = (-1) * x_dist / Math.sin(radianConstant);
+            double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
+            double yInch = y_diff * 39.37;
 
-        //     PID.setReference(0.2, ControlType.kDutyCycle);
-        //     isLoaded = false;
-        // }
+            PID.setReference(0.2, ControlType.kDutyCycle);
+            isLoaded = false;
+        }
 
         PID.setReference(speed, ControlType.kDutyCycle);
     }
 
     @Override
     public void periodic() {
-        // if(getLimitSwitch()) {
-        //     isLoaded = true;
-        // } else {
-        //     isLoaded = false;
-        // }
-        // SmartDashboard.putBoolean("coral outtake: ", isLoaded);
-        // SmartDashboard.putNumber("distance sensor: ", getreefDistance());
+        if(getLimitSwitch()) {
+            isLoaded = true;
+        } else {
+            isLoaded = false;
+        }
+        if(intakingLoad && isLoaded == false) {
+            PID.setReference(0.15, ControlType.kDutyCycle);
+        } else {
+            PID.setReference(0, ControlType.kDutyCycle);
+            intakingLoad = false;
+        }
+        SmartDashboard.putBoolean("coral outtake: ", isLoaded);
+        SmartDashboard.putNumber("distance sensor: ", getreefDistance());
     }
 
     private double getreefDistance() {
         // in cm
         // return ((counter.getPeriod() - 0.001) *1E+5 * 3.61) + 2;
         return 0;
+    }
+
+    public double move(double speed) {
+        PID.setReference(speed, ControlType.kDutyCycle);
+    }
+
+    public void intakeStart() {
+        intakingLoad = true;
     }
 }
