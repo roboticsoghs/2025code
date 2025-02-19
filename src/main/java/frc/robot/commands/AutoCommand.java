@@ -8,7 +8,8 @@ public class AutoCommand extends Command {
 
     public AutoCommand() {
         this.finished = false;
-        addRequirements(RobotContainer.drivetrain, RobotContainer.elevator, RobotContainer.shooter, RobotContainer.visionSystem);
+        // addRequirements(RobotContainer.drivetrain, RobotContainer.elevator, RobotContainer.shooter, RobotContainer.visionSystem);
+        addRequirements(RobotContainer.drivetrain);
     }
 
     @Override

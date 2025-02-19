@@ -50,7 +50,7 @@ public class JoystickCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Robotcontainer.intakeButton.getAsBoolean()) {
+    if(RobotContainer.intakeButton.getAsBoolean()) {
       slowModeMultiplier = !slowModeMultiplier;
     }
     SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
@@ -158,7 +158,7 @@ public class JoystickCommand extends Command {
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
     if(slowModeMultiplier) {
       RobotContainer.drivetrain.setAllMotorsSpeed(0.8 * leftDriveTrainSpeed, 0.8 * rightDriveTrainSpeed);
-    else {
+    } else {
       RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
     }
 }
