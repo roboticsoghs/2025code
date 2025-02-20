@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
-    double x;
-    double y;
-    double area;
+    private double x;
+    private double y;
+    private double area;
 
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
     NetworkTableEntry tx = table.getEntry("tx");
@@ -22,7 +22,7 @@ public class Vision extends SubsystemBase {
 
   /** Creates a new ExampleSubsystem. */
   public Vision() {
-
+    System.out.println("We are cooked!");
   }
 
   @Override
@@ -30,6 +30,7 @@ public class Vision extends SubsystemBase {
     // This method will be called once per scheduler run
     //read values periodically
     x = tx.getDouble(0.0);
+    // Ignore y and area
     y = ty.getDouble(0.0);
     area = ta.getDouble(0.0);
 
@@ -41,6 +42,10 @@ public class Vision extends SubsystemBase {
 
   public boolean isApriltag() {
     return x != 0 && y != 0;
+  }
+
+  public double getX() {
+    return x;
   }
 
   @Override

@@ -1,26 +1,50 @@
 package frc.robot.subsystems;
 
+import com.pathplanner.lib.controllers.PPLTVController;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycle;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class DriveTrain extends SubsystemBase {
+    // private final DifferentialDriveOdometry odometry;
+    // private final DifferentialDriveKinematics kinematics;
+    private AnalogGyro gyro = new AnalogGyro(0); // DIO port
+    // AutoBuilder.configure(
+    //     this::getPose, // Robot pose supplier (returns the current robot pose)
+    //     this::resetPose, // Method to reset odometry (called if your auto has a starting pose)
+    //     this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. Must be robot-relative.
+    //     (speeds, feedforwards) -> setAllMotorsSpeed(speeds, speeds), // Method that will drive the robot using ROBOT RELATIVE ChassisSpeeds
+    //     PPLTVController(0.02), // Path following controller for differential drive
+    //     config, // Robot configuration (e.g., max speeds, robot dimensions)
+    //     () -> {
+    //         // Boolean supplier that controls when the path will be mirrored for the red alliance
+    //         // This will flip the path being followed to the red side of the field.
+    //         // THE ORIGIN WILL REMAIN ON THE BLUE SIDE.
+    //         DriverStation.Alliance alliance = DriverStation.getAlliance();
+    //         return alliance == DriverStation.Alliance.Red; // Return true if it's the red alliance
+    //     },
+    //     this // Reference to this subsystem to set requirements
+    // );
+    
     // motors
     private final SparkMax leftFrontMotor;
     private final SparkMax leftRearMotor;
@@ -121,6 +145,11 @@ public class DriveTrain extends SubsystemBase {
 
         // configure PID controllers
         configurePIDControllers();
+
+        // Reset encoders to start at zero
+        leftFrontEncoder.setPosition(0);
+        rightFrontEncoder.setPosition(0);
+
 
         // restore factory defaults and set new configs for each motor
         leftFrontConfig.signals.primaryEncoderPositionPeriodMs(5);
@@ -307,11 +336,45 @@ public class DriveTrain extends SubsystemBase {
         // differentialDrive.arcadeDrive(leftSpeed, rightSpeed);
     }
 
+    // Odometry Method - Get current robot pose
+    // public Pose2d getPose() {
+    //     return odometry.getPoseMeters();
+    // }
+
+    // // Reset Odometry Method - Reset to a given pose (typically from your autonomous routine)
+    // public void resetPose(Pose2d pose) {
+    //     odometry.resetPosition(gyro.getRotation2d(), leftFrontEncoder.getPosition(), rightFrontEncoder.getPosition(), pose);
+    // }
+
+    // // Get Robot Relative Speeds for PathPlanner (used by AutoBuilder)
+    // public ChassisSpeeds getRobotRelativeSpeeds() {
+    //     double leftSpeed = leftFrontEncoder.getVelocity();  // Left motor speed (meters per second)
+    //     double rightSpeed = rightFrontEncoder.getVelocity();  // Right motor speed (meters per second)
+    //     return new ChassisSpeeds(leftSpeed, 0, rightSpeed);  // Tank drive has no strafe speed, so Y is 0
+    // }
+
+    // // Gyro Yaw - Returns the robot's heading (rotation) for odometry
+    // public Rotation2d getGyroYaw() {
+    //     return gyro.getRotation2d();  // Assumes Gyro object gives rotation in degrees or radians
+    // }
+
+    private double getHeading() {
+        // Get the current gyro angle (assuming counterclockwise is positive)
+        return Math.IEEEremainder(gyro.getAngle(), 360); // Keeps angle in range [-180, 180]
+    }
+
     @Override
     public void periodic() {
         // Update odometry, smart dashboard, etc.
         differentialDrive.feed();
+        // Update the odometry with encoder positions and gyro heading
+        // odometry.update(getGyroYaw(), leftFrontEncoder.getPosition(), rightFrontEncoder.getPosition());
 
+        // Optionally, display the robot's current position on the SmartDashboard
+        // SmartDashboard.putNumber("Robot X", odometry.getPoseMeters().getX());
+        // SmartDashboard.putNumber("Robot Y", odometry.getPoseMeters().getY());
+        // SmartDashboard.putNumber("Robot Heading", odometry.getPoseMeters().getRotation().getDegrees());
+        SmartDashboard.putNumber("angle: ", gyro.getAngle());
 
         // System.out.println(4 * (dutyCycle.getOutput() - 1000));
     }

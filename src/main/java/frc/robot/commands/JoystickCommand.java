@@ -30,8 +30,8 @@ public class JoystickCommand extends Command {
   public JoystickCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(RobotContainer.drivetrain, RobotContainer.elevator);
-    // addRequirements(RobotContainer.drivetrain, RobotContainer.shooter);
-    addRequirements(RobotContainer.drivetrain);
+    addRequirements(RobotContainer.drivetrain, RobotContainer.shooter, RobotContainer.elevator);
+    // addRequirements(RobotContainer.drivetrain);
     throttleValue = 0;
     slowModeMultiplier = false;
     // addRequirements(RobotContainer.elevator);

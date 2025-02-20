@@ -151,7 +151,7 @@ public class Shooter extends SubsystemBase {
         return 0;
     }
 
-    public double move(double speed) {
+    public void move(double speed) {
         PID.setReference(speed, ControlType.kDutyCycle);
     }
 

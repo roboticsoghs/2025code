@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.commands.PathPlannerAuto;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Joystick;
@@ -13,6 +15,7 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.PositionDriveTrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 import frc.robot.Constants;
@@ -31,11 +34,12 @@ public class RobotContainer {
 
   // initialize subsystems
   public static final DriveTrain drivetrain = new DriveTrain();
-  // public static final Elevator elevator = new Elevator();
-  // public static final Shooter shooter = new Shooter();
+  public static final PositionDriveTrain position_drive = new PositionDriveTrain();
+  public static final Elevator elevator = new Elevator();
+  public static final Shooter shooter = new Shooter();
   public static final XboxController driveStick = new XboxController(0);
   public static final Joystick m_operator = new Joystick(1);
-  // public static final Vision visionSystem = new Vision();
+  public static final Vision visionSystem = new Vision();
 
   // operator board buttons
   public static JoystickButton intakeButton = new JoystickButton(m_operator, Constants.INTAKE_PORT);
@@ -61,6 +65,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return new PathPlannerAuto("Auto 2");
   }
 }
