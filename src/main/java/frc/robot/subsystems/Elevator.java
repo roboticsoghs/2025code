@@ -28,7 +28,7 @@ public class Elevator extends SubsystemBase {
         // position value is in revolutions relative to RESTING_POSITION
         // TODO: figure out revolutions of the motor needed for each level
         RESTING_POSITION(0),
-        INTAKE_POSITION(0), // TODO:
+        INTAKE_POSITION(3), 
         LEVEL_0(5),
         LEVEL_1(10),
         LEVEL_2(15),
@@ -119,8 +119,8 @@ public class Elevator extends SubsystemBase {
         rightEncoder = rightMotor.getEncoder();
 
         // set idle mode for motors
-        leftConfig.idleMode(IdleMode.kCoast);
-        rightConfig.idleMode(IdleMode.kCoast);
+        leftConfig.idleMode(IdleMode.kBrake);
+        rightConfig.idleMode(IdleMode.kBrake);
 
         leftConfig.inverted(true);
         rightConfig.inverted(false);
@@ -317,13 +317,13 @@ public class Elevator extends SubsystemBase {
         rightEncoder.setPosition(0);
     }
     public double rotationsToLinear(double rotations) {
-        double actualRotations = rotations / Constants.gearRatio;
-        return (2 * Math.PI * Constants.wheelRadius) * actualRotations;
+        double actualRotations = rotations / Constants.ElevatorgearRatio;
+        return (2 * Math.PI * Constants.ElevatorwheelRadius) * actualRotations;
     }
 
     public double lineartoRotations(double inches) {
-        double bigRotations = inches / (2 * Math.PI * Constants.wheelRadius);
-        return bigRotations * Constants.gearRatio;
+        double bigRotations = inches / (2 * Math.PI * Constants.ElevatorwheelRadius);
+        return bigRotations * Constants.ElevatorgearRatio;
     }
 
     public double linearErrorRate(double error) {

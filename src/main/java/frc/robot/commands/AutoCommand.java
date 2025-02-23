@@ -1,52 +1,92 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.trajectory.PathPlannerTrajectory;
-import frc.robot.subsystems.Elevator.ElevatorPosition;
-import java.util.List;
 
 public class AutoCommand extends Command {
     private boolean finished = false;
+    private boolean detectedTag = false;
+    private boolean linedUp = false;
+    private boolean movedBack = false;
+    private double lineUpWithAprilTag = 0;
+    double finalPosition = 0;
+    private double position = 0;
 
     public AutoCommand() {
-        // PathPlannerTrajectory trajectory = new PathPlannerAuto("Auto 1");
-
-        this.finished = false;
-        addRequirements(RobotContainer.position_drive, RobotContainer.elevator, RobotContainer.shooter, RobotContainer.visionSystem);
-        // addRequirements(RobotContainer.drivetrain);
+        addRequirements(RobotContainer.drivetrain, RobotContainer.visionSystem);
+        RobotContainer.drivetrain.resetAllEncoders();
     }
 
     @Override
     public void execute() {
-        // Get joystick values from Xbox controller
-        RobotContainer.position_drive.setAllMotorsSpeed(30, 30);
-        if(RobotContainer.visionSystem.isApriltag()) {
+        SmartDashboard.putNumber("auto pos: ", position);
+        SmartDashboard.putBoolean("auto finished", finished);
+
+        if (RobotContainer.visionSystem.isApriltag()) {
+            SmartDashboard.putBoolean("AprilTag Seen", true);
+            detectedTag = true;
+
+            // Get offsets
             double offSetX = RobotContainer.visionSystem.getX();
-            // Let's say we want our x to be 0.05;
-            double distanceToMove = offSetX - 0.05;
-            if(distanceToMove > 0.02) {
-                // Implement logic to move some amount of rotations
+            double offSetY = RobotContainer.visionSystem.getY();
+
+            // Stop the robot when the tag is detected
+            RobotContainer.drivetrain.stopMotor();
+
+            // Calculate horizontal distance to tag
+            double horizontalDistance = Constants.offSetHeight * Math.tan(Math.toRadians(offSetY - 8));
+            lineUpWithAprilTag = position + RobotContainer.drivetrain.lineartoRotations(horizontalDistance / Math.tan(Math.toRadians(offSetX)));
+
+            // Move to line up with the AprilTag
+            if (!linedUp) {
+                SmartDashboard.putNumber("Aligning Distance", lineUpWithAprilTag);
+                position = lineUpWithAprilTag;
+                finalPosition = position;
+                RobotContainer.drivetrain.setAllMotorsPosition(
+                    // lineUpWithAprilTag,
+                    // lineUpWithAprilTag
+                    4,4
+                );
+                linedUp = true;
+                // initialEncoderPosition = RobotContainer.drivetrain.getleftFrontEncoder(); // Record encoder position
+            }
+
+        } else {
+            SmartDashboard.putBoolean("AprilTag Seen", false);
+
+            if (!detectedTag) {
+                // Keep driving forward until it sees a tag
+                RobotContainer.drivetrain.setAllMotorsPosition(position - 1, position - 1);
+                position--;
             }
         }
-        RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
-        RobotContainer.shooter.shoot_that_fucker(0.2);
+
+        // Move back 2 feet after aligning
+        if (linedUp && !movedBack) {
+            double targetDistance = finalPosition + RobotContainer.drivetrain.lineartoRotations(24); // 24 inches (2 feet)
+            SmartDashboard.putNumber("Target Dist: ", targetDistance);
+            double currentPosition = Math.abs(RobotContainer.drivetrain.getleftFrontEncoder());
+
+            // if (currentPosition <= targetDistance) {
+            //     RobotContainer.drivetrain.stopMotor();
+            //     movedBack = true;
+            //     finished = true;
+            // } else {
+                // RobotContainer.drivetrain.setAllMotorsPosition(targetDistance, targetDistance);
+            // }
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
-        // Stop the robot when the command ends
-        RobotContainer.position_drive.setAllMotorsSpeed(0, 0);
-        finished = true;
+        RobotContainer.drivetrain.setAllMotorsSpeed(0, 0); // Stop motors
     }
 
     @Override
     public boolean isFinished() {
-        // This command should never end on its own
-        return false;
+        return finished;
     }
 }

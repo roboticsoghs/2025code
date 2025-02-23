@@ -72,24 +72,20 @@ public class JoystickCommand extends Command {
     if(throttleValue <= -0.8 && throttleValue >= -0.9){
       // L0
       // shoots coral at L1
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
-      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
     }
     if(throttleValue <= -0.7 && throttleValue >= -0.8){
       // L1
       // shoots coral at L2
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
-      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
     }
     if(throttleValue <= -0.6 && throttleValue >= -0.7){
       // shoots coral at L2
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
-      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
     }
     if(throttleValue <= -0.5 && throttleValue >= -0.6){
       // shoots coral at L2
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
-      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
     }
         // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
@@ -98,24 +94,24 @@ public class JoystickCommand extends Command {
     if (RobotContainer.driveStick.getRightTriggerAxis() < 0.5) {
       handleRightTriggerPressed(0);
     }
-    // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
-    if (RobotContainer.driveStick.getLeftTriggerAxis() > 0.5) {
-      handleRightTriggerPressed(-0.15);
-    }
-    if (RobotContainer.driveStick.getLeftTriggerAxis() < 0.5) {
-      handleRightTriggerPressed(0);
-    }
+    // // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
+    // if (RobotContainer.driveStick.getLeftTriggerAxis() > 0.5) {
+    //   handleRightTriggerPressed(-0.15);
+    // }
+    // if (RobotContainer.driveStick.getLeftTriggerAxis() < 0.5) {
+    //   handleRightTriggerPressed(0);
+    // }
 
     if (RobotContainer.driveStick.getLeftBumperButton()) {
       intakeStart();
     }
 
-    // switch(RobotContainer.driveStick.getPOV()) {
-    //   case 0:
-    //     handleUp();
-    //   case 180:
-    //     handleDown();
-    // }
+    switch(RobotContainer.driveStick.getPOV()) {
+      case 0:
+        handleUp();
+      case 180:
+        handleDown();
+    }
 
 
     // Get the value of the left Y axis (left joystick vertical movement)
@@ -178,22 +174,20 @@ public class JoystickCommand extends Command {
     RobotContainer.shooter.shoot_that_fucker(speed);
   }
 
-  private void triggerPressed(double speed) {
-    RobotContainer.shooter.move(speed);
-  }
+  // private void triggerPressed(double speed) {
+  //   RobotContainer.shooter.move(speed);
+  // }
 
   private void intakeStart() {
     RobotContainer.shooter.intakeStart();
   }
-  // private void handleUp() {
-  //   double encoder = Math.abs(RobotContainer.elevator.getLeftEncoder());
-  //   RobotContainer.elevator.moveRotation(1.0);
-  // }
+  private void handleUp() {
+    RobotContainer.elevator.moveRotation(1.0);
+  }
 
-  // private void handleDown() {
-  //   double encoder = Math.abs(RobotContainer.elevator.getLeftEncoder());
-  //   RobotContainer.elevator.moveRotation(-1.0);
-  // }
+  private void handleDown() {
+    RobotContainer.elevator.moveRotation(-1.0);
+  }
 
   // Called once the command ends or is interrupted.
   @Override

@@ -121,11 +121,9 @@ public class Shooter extends SubsystemBase {
             double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
             double yInch = y_diff * 39.37;
 
-            PID.setReference(0.2, ControlType.kDutyCycle);
+            PID.setReference(speed, ControlType.kDutyCycle);
             isLoaded = false;
         }
-
-        PID.setReference(speed, ControlType.kDutyCycle);
     }
 
     @Override
@@ -136,7 +134,7 @@ public class Shooter extends SubsystemBase {
             isLoaded = false;
         }
         if(intakingLoad && isLoaded == false) {
-            PID.setReference(0.15, ControlType.kDutyCycle);
+            PID.setReference(0.1, ControlType.kDutyCycle);
         } else {
             PID.setReference(0, ControlType.kDutyCycle);
             intakingLoad = false;

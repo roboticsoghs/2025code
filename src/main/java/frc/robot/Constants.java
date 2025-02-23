@@ -39,10 +39,12 @@ public final class Constants {
     public static int INTAKE_PORT = 8;
 
     // general
-    public static double gearRatio = 12; // 8.714
-    public static double wheelRadius = 0.875;
+    public static double ElevatorgearRatio = 12; 
+    public static double ElevatorwheelRadius = 0.875;
+    public static double DriveTrainGearRatio = 8.714;
+    public static double DriveTrainWheelRadius = 3;
     public static int encoderTicksPerRotation = 42;
-
+    public static double offSetHeight = 3.5;
     public static boolean slowMode = false;
     public static double slowModeMultipler = 0.3;
 

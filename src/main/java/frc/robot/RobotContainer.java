@@ -15,7 +15,6 @@ import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.ExampleSubsystem;
-import frc.robot.subsystems.PositionDriveTrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 import frc.robot.Constants;
@@ -34,9 +33,8 @@ public class RobotContainer {
 
   // initialize subsystems
   public static final DriveTrain drivetrain = new DriveTrain();
-  public static final PositionDriveTrain position_drive = new PositionDriveTrain();
-  public static final Elevator elevator = new Elevator();
-  public static final Shooter shooter = new Shooter();
+  public static final Elevator elevator = new Elevator(); // temp disabled
+  public static final Shooter shooter = new Shooter(); // temp disabled
   public static final XboxController driveStick = new XboxController(0);
   public static final Joystick m_operator = new Joystick(1);
   public static final Vision visionSystem = new Vision();

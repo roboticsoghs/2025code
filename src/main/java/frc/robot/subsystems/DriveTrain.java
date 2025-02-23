@@ -5,6 +5,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -70,10 +71,21 @@ public class DriveTrain extends SubsystemBase {
     private final RelativeEncoder rightRearEncoder;
 
     // SmartVelocity PID (MaxMotion)
-    private final double SmartVelocityP = 0.00011; // prev value: 0.0011
+    private final double SmartVelocityP = 0.0001; // prev value: 0.0011
     private final double SmartVelocityI = 0;
     private final double SmartVelocityD = 0;
     private final double SmartVelocityFF = 0;
+
+    // SmartPosition PID (MaxMotion)
+    private final double SmartPositionP = 2.1; // prev value: 2.2
+    private final double SmartPositionI = 0;
+    private final double SmartPositionD = 0;
+    private final double SmartPositionFF = 0;
+
+    private final double SmartPositionMaxAccel = 200;
+    private final double SmartPositionMaxVel = 500;
+
+    private final double SmartPositionAllowedError = lineartoRotations(3);
 
     // max motor speed
     // private final double MaxOutput = 1; // unused
@@ -82,6 +94,8 @@ public class DriveTrain extends SubsystemBase {
 
     // max motor acceleration
     private final double maxAccel = 1000000000;
+
+    private double encoderVal = 0;
     // private final int SmartMotionID = 0; // unused
     // private int MaxMotionID = 1; // unused
     private final int maxVel = 4540;
@@ -121,10 +135,10 @@ public class DriveTrain extends SubsystemBase {
         rightRearEncoder = rightRearMotor.getEncoder();
 
         // set idle mode for motors
-        leftFrontConfig.idleMode(IdleMode.kBrake);
-        leftRearConfig.idleMode(IdleMode.kBrake);
-        rightFrontConfig.idleMode(IdleMode.kBrake);
-        rightRearConfig.idleMode(IdleMode.kBrake);
+        leftFrontConfig.idleMode(IdleMode.kCoast);
+        leftRearConfig.idleMode(IdleMode.kCoast);
+        rightFrontConfig.idleMode(IdleMode.kCoast);
+        rightRearConfig.idleMode(IdleMode.kCoast);
 
         leftFrontConfig.inverted(false);
         // leftRear.setInverted(false);
@@ -170,13 +184,18 @@ public class DriveTrain extends SubsystemBase {
 
     private void configurePIDControllers() {
         // Apply PID constants to the PID controllers
+        // kslot 0
         // left front motor
         leftFrontConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        leftFrontConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
-        leftFrontConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
-        leftFrontConfig.closedLoop.maxMotion.maxVelocity(maxVel);
+        leftFrontConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        leftFrontConfig.closedLoop.pid(SmartPositionP, SmartPositionI, SmartPositionD, ClosedLoopSlot.kSlot1); // MaxMotion Position
+        leftFrontConfig.closedLoop.maxMotion.maxAcceleration(maxAccel, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        leftFrontConfig.closedLoop.maxMotion.maxAcceleration(SmartPositionMaxAccel, ClosedLoopSlot.kSlot1); // MaxMotion Position
+        leftFrontConfig.closedLoop.maxMotion.maxVelocity(maxVel, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        leftFrontConfig.closedLoop.maxMotion.maxVelocity(SmartPositionMaxVel, ClosedLoopSlot.kSlot1); // MaxMotion Position
         leftFrontConfig.closedLoop.velocityFF(SmartVelocityFF);
-        leftFrontConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
+        leftFrontConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError, ClosedLoopSlot.kSlot0);
+        leftFrontConfig.closedLoop.maxMotion.allowedClosedLoopError(SmartPositionAllowedError, ClosedLoopSlot.kSlot1);
         // leftFrontConfig.closedLoop.outputRange(MinOutput, MaxOutput);
 
         // leftFrontPID.setOutputRange(MinOutput, MaxOutput, MaxMotionID);
@@ -184,33 +203,45 @@ public class DriveTrain extends SubsystemBase {
 
         // left rear motor
         leftRearConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        leftRearConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
-        leftRearConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
-        leftRearConfig.closedLoop.maxMotion.maxVelocity(maxVel);
+        leftRearConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        leftRearConfig.closedLoop.pid(SmartPositionP, SmartPositionI, SmartPositionD, ClosedLoopSlot.kSlot1); // MaxMotion Position
+        leftRearConfig.closedLoop.maxMotion.maxAcceleration(maxAccel, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        leftRearConfig.closedLoop.maxMotion.maxAcceleration(SmartPositionMaxAccel, ClosedLoopSlot.kSlot1); // MaxMotion Position
+        leftRearConfig.closedLoop.maxMotion.maxVelocity(maxVel, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        leftRearConfig.closedLoop.maxMotion.maxVelocity(SmartPositionMaxVel, ClosedLoopSlot.kSlot1); // MaxMotion Position
         leftRearConfig.closedLoop.velocityFF(SmartVelocityFF);
-        leftRearConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
+        leftRearConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError, ClosedLoopSlot.kSlot0);
+        leftRearConfig.closedLoop.maxMotion.allowedClosedLoopError(SmartPositionAllowedError, ClosedLoopSlot.kSlot1);
 
         // leftRearPID.setOutputRange(MinOutput, MaxOutput, MaxMotionID);
         // leftRearPID.setSmartMotionMinOutputVelocity(minVel, MaxMotionID);
 
         // right front motor
         rightFrontConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        rightFrontConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
-        rightFrontConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
-        rightFrontConfig.closedLoop.maxMotion.maxVelocity(maxVel);
+        rightFrontConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        rightFrontConfig.closedLoop.pid(SmartPositionP, SmartPositionI, SmartPositionD, ClosedLoopSlot.kSlot1); // MaxMotion Position
+        rightFrontConfig.closedLoop.maxMotion.maxAcceleration(maxAccel, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        rightFrontConfig.closedLoop.maxMotion.maxAcceleration(SmartPositionMaxAccel, ClosedLoopSlot.kSlot1); // MaxMotion Position
+        rightFrontConfig.closedLoop.maxMotion.maxVelocity(maxVel, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        rightFrontConfig.closedLoop.maxMotion.maxVelocity(SmartPositionMaxVel, ClosedLoopSlot.kSlot1); // MaxMotion Position
         rightFrontConfig.closedLoop.velocityFF(SmartVelocityFF);
-        rightFrontConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
+        rightFrontConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError, ClosedLoopSlot.kSlot0);
+        rightRearConfig.closedLoop.maxMotion.allowedClosedLoopError(SmartPositionAllowedError, ClosedLoopSlot.kSlot1);
 
         // rightFrontPID.setOutputRange(MinOutput, MaxOutput, ClosedLoopSlot.kSlot1);
         // rightFrontPID.setSmartMotionMinOutputVelocity(minVel, ClosedLoopSlot.kSlot1);
 
         // right rear motor
         rightRearConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        rightRearConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
-        rightRearConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
-        rightRearConfig.closedLoop.maxMotion.maxVelocity(maxVel);
+        rightRearConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        rightRearConfig.closedLoop.pid(SmartPositionP, SmartPositionI, SmartPositionD, ClosedLoopSlot.kSlot1); // MaxMotion Position
+        rightRearConfig.closedLoop.maxMotion.maxAcceleration(maxAccel, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        rightRearConfig.closedLoop.maxMotion.maxAcceleration(SmartPositionMaxAccel, ClosedLoopSlot.kSlot1); // MaxMotion Position
+        rightRearConfig.closedLoop.maxMotion.maxVelocity(maxVel, ClosedLoopSlot.kSlot0); // MaxMotion Velocity
+        rightRearConfig.closedLoop.maxMotion.maxVelocity(SmartPositionMaxVel, ClosedLoopSlot.kSlot1); // MaxMotion Position
         rightRearConfig.closedLoop.velocityFF(SmartVelocityFF);
-        rightRearConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
+        rightRearConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError, ClosedLoopSlot.kSlot0);
+        rightRearConfig.closedLoop.maxMotion.allowedClosedLoopError(SmartPositionAllowedError, ClosedLoopSlot.kSlot1);
 
         // rightRearPID.setOutputRange(MinOutput, MaxOutput, ClosedLoopSlot.kSlot1);
         // rightRearPID.setSmartMotionMinOutputVelocity(minVel, ClosedLoopSlot.kSlot1);
@@ -251,10 +282,10 @@ public class DriveTrain extends SubsystemBase {
         // calculate the necessary rpm
         double speed = input * maxVel;
         SmartDashboard.putNumber("Speed of left side(rpm): ", speed);
-        System.out.println("right speed: " + speed);
+        // System.out.println("right speed: " + speed);
         // Set rpm for left motors
-        leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
-        leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl);
+        leftFrontPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot0);
+        leftRearPID.setReference(speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot0);
         // leftFrontMotor.set(speed);
         // leftRearMotor.set(speed);
     }
@@ -266,10 +297,10 @@ public class DriveTrain extends SubsystemBase {
         // calculate the necessary rpm
         double speed = input * maxVel;
         SmartDashboard.putNumber("Speed of right side(rpm): ", speed);
-        System.out.println("right speed: " + speed);
+        // System.out.println("right speed: " + speed);
         // Set rpm for left motors
-        rightFrontPID.setReference(-speed, ControlType.kMAXMotionVelocityControl);
-        rightRearPID.setReference(-speed, ControlType.kMAXMotionVelocityControl);
+        rightFrontPID.setReference(-speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot0);
+        rightRearPID.setReference(-speed, ControlType.kMAXMotionVelocityControl, ClosedLoopSlot.kSlot0);
         // rightFrontMotor.set(speed);
         // rightRearMotor.set(speed);
     }
@@ -288,8 +319,9 @@ public class DriveTrain extends SubsystemBase {
     public void setLeftSideMotorsPosition(double rotations) {
         // Controlling robot through percent output/motion control
         // System.out.println("rpm: " + rotations);
-        leftFrontPID.setReference(rotations, ControlType.kDutyCycle);
-        leftRearPID.setReference(rotations, ControlType.kDutyCycle);
+        SmartDashboard.putNumber("left side pos: ", rotations);
+        leftFrontPID.setReference(rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
+        leftRearPID.setReference(rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
     }
 
     /**
@@ -298,16 +330,17 @@ public class DriveTrain extends SubsystemBase {
     public void setRightSideMotorsPosition(double rotations) {
         // Controlling robot through percent output/motion control
         // System.out.println("rpm: " + rotations);
-        rightFrontPID.setReference(rotations, ControlType.kDutyCycle);
-        rightRearPID.setReference(rotations, ControlType.kDutyCycle);
+        SmartDashboard.putNumber("right side pos: ", rotations);
+        rightFrontPID.setReference(-rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
+        rightRearPID.setReference(-rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot1);
     }
 
     /**
      * @param rotations percent output for robot motors
      */
-    public void setAllMotorsPosition(double rotations) {
-        setLeftSideMotorsPosition(rotations);
-        setRightSideMotorsPosition(rotations);
+    public void setAllMotorsPosition(double leftRotations, double rightRotations) {
+        setLeftSideMotorsPosition(leftRotations);
+        setRightSideMotorsPosition(rightRotations);
     }
 
     public void resetLeftSideEncoders() {
@@ -375,7 +408,36 @@ public class DriveTrain extends SubsystemBase {
         // SmartDashboard.putNumber("Robot Y", odometry.getPoseMeters().getY());
         // SmartDashboard.putNumber("Robot Heading", odometry.getPoseMeters().getRotation().getDegrees());
         SmartDashboard.putNumber("angle: ", gyro.getAngle());
+        SmartDashboard.putNumber("left rotation: ", getleftFrontEncoder());
+        SmartDashboard.putNumber("right rotation: ", getRightFrontEncoder());
+        encoderVal = getleftFrontEncoder();
 
         // System.out.println(4 * (dutyCycle.getOutput() - 1000));
+    }
+
+    public double getEncoderVal() {
+        return encoderVal;
+    }
+
+    public double rotationsToLinear(double rotations) {
+        double actualRotations = rotations / Constants.DriveTrainGearRatio;
+        return (2 * Math.PI * Constants.DriveTrainWheelRadius) * actualRotations;
+    }
+
+    public double lineartoRotations(double inches) {
+        double bigRotations = inches / (2 * Math.PI * Constants.DriveTrainWheelRadius);
+        return bigRotations * Constants.DriveTrainGearRatio;
+    }
+
+    public double linearErrorRate(double error) {
+        return error;
+    }
+
+    public void stopMotor() {
+        leftFrontMotor.stopMotor();
+        rightFrontMotor.stopMotor();
+
+        leftRearMotor.stopMotor();
+        rightRearMotor.stopMotor();
     }
 }

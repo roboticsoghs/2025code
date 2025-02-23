@@ -62,9 +62,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
 
     // schedule the autonomous command
-    if (m_autonomousCommand != null) {
+    // if (m_autonomousCommand != null) {
       m_autonomousCommand = new AutoCommand();
-    }
+    // }
   }
 
   /** This function is called periodically during autonomous. */
