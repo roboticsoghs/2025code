@@ -95,12 +95,12 @@ public class JoystickCommand extends Command {
       handleRightTriggerPressed(0);
     }
     // // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
-    // if (RobotContainer.driveStick.getLeftTriggerAxis() > 0.5) {
-    //   handleRightTriggerPressed(-0.15);
-    // }
-    // if (RobotContainer.driveStick.getLeftTriggerAxis() < 0.5) {
-    //   handleRightTriggerPressed(0);
-    // }
+    if (RobotContainer.driveStick.getLeftTriggerAxis() > 0.5) {
+      handleRightTriggerPressed(-0.15);
+    }
+    if (RobotContainer.driveStick.getLeftTriggerAxis() < 0.5) {
+      handleRightTriggerPressed(0);
+    }
 
     if (RobotContainer.driveStick.getLeftBumperButton()) {
       intakeStart();
@@ -174,9 +174,9 @@ public class JoystickCommand extends Command {
     RobotContainer.shooter.shoot_that_fucker(speed);
   }
 
-  // private void triggerPressed(double speed) {
-  //   RobotContainer.shooter.move(speed);
-  // }
+  private void triggerPressed(double speed) {
+    RobotContainer.shooter.move(speed);
+  }
 
   private void intakeStart() {
     RobotContainer.shooter.intakeStart();

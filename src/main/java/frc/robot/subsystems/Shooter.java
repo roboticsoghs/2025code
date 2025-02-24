@@ -124,6 +124,7 @@ public class Shooter extends SubsystemBase {
             PID.setReference(speed, ControlType.kDutyCycle);
             isLoaded = false;
         }
+        PID.setReference(speed, ControlType.kDutyCycle);
     }
 
     @Override
