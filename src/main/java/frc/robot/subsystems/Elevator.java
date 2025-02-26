@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
@@ -90,6 +91,8 @@ public class Elevator extends SubsystemBase {
     private ElevatorPosition position;
     private ElevatorStates isCalibrated = ElevatorStates.INITIALIZING;
 
+    // Finish up feedForward code
+    private final ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(, ,);
     public final double allowedError = 0.05;
 
     public double encoderValue;
@@ -182,7 +185,7 @@ public class Elevator extends SubsystemBase {
             switch (pos) {
                 case INTAKE_POSITION -> {
                     position = ElevatorPosition.INTAKE_POSITION;
-                    leftPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
+                    leftPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl, feedForward); // calculate necessary rotations
                     // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
                     // rightPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl);
                     SmartDashboard.putNumber("elevator revs: ", position.getValue());
