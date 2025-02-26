@@ -33,7 +33,7 @@ public class Shooter extends SubsystemBase {
     // motor encoders
     private final RelativeEncoder Encoder;
     // SmartVelocity PID
-    private final double SmartVelocityP = 0.0002;
+    private final double SmartVelocityP = 0.002;
     private final double SmartVelocityI = 0; // 0.00003
     private final double SmartVelocityD = 0;
     private final double SmartVelocityFF = 0;
@@ -74,7 +74,7 @@ public class Shooter extends SubsystemBase {
         Encoder = motor.getEncoder();
 
         // set idle mode for motors
-        config.idleMode(IdleMode.kBrake);
+        config.idleMode(IdleMode.kCoast);
 
         // set voltage compensation
         config.voltageCompensation(12.0);
@@ -111,19 +111,19 @@ public class Shooter extends SubsystemBase {
         return Encoder.getPosition() * 42;
     }
 
-    public void shoot_that_fucker(double speed) {
-        if(isLoaded) {
+    public void shoot_that_fucker(double speed) { 
+        // if(isLoaded) {
             
-            double x_dist = getreefDistance();
-            // Shoot coral at 20% speed
-            double radianConstant = Math.toRadians(35);
-            double t = (-1) * x_dist / Math.sin(radianConstant);
-            double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
-            double yInch = y_diff * 39.37;
+        //     double x_dist = getreefDistance();
+        //     // Shoot coral at 20% speed
+        //     double radianConstant = Math.toRadians(35);
+        //     double t = (-1) * x_dist / Math.sin(radianConstant);
+        //     double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
+        //     double yInch = y_diff * 39.37;
 
-            PID.setReference(speed, ControlType.kDutyCycle);
-            isLoaded = false;
-        }
+        //     PID.setReference(speed, ControlType.kDutyCycle);
+        //     isLoaded = false;
+        // }
         PID.setReference(speed, ControlType.kDutyCycle);
     }
 
@@ -137,7 +137,6 @@ public class Shooter extends SubsystemBase {
         if(intakingLoad && isLoaded == false) {
             PID.setReference(0.1, ControlType.kDutyCycle);
         } else {
-            PID.setReference(0, ControlType.kDutyCycle);
             intakingLoad = false;
         }
         SmartDashboard.putBoolean("coral outtake: ", isLoaded);
@@ -156,5 +155,8 @@ public class Shooter extends SubsystemBase {
 
     public void intakeStart() {
         intakingLoad = true;
+    }
+    public void intakeStop() {
+        intakingLoad = false;
     }
 }

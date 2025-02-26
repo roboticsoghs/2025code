@@ -60,13 +60,13 @@ public class JoystickCommand extends Command {
       throttleValue = RobotContainer.m_operator.getRawAxis(6);
       SmartDashboard.putNumber("op board 6: ", throttleValue);
       // Constants.slowMode = !Constants.slowMode;
-      // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
+      RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
       // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
     if(throttleValue == -1){
       // rest
       // shoots coral at bottom of reef (L0)
-      // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
     if(throttleValue <= -0.8 && throttleValue >= -0.9){
@@ -88,22 +88,32 @@ public class JoystickCommand extends Command {
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
     }
         // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
-    if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
-      handleRightTriggerPressed(0.15);
+    
+    if (RobotContainer.driveStick.getLeftTriggerAxis() < 0.5) {
+      SmartDashboard.putBoolean("Left click", false);
+      triggerPressed(0);
     }
-    if (RobotContainer.driveStick.getRightTriggerAxis() < 0.5) {
-      handleRightTriggerPressed(0);
+    if (RobotContainer.driveStick.getRightTriggerAxis() < 0.2) {
+      SmartDashboard.putBoolean("Right click", false);
+      triggerPressed(0);
     }
+    SmartDashboard.putNumber("click", RobotContainer.driveStick.getRightTriggerAxis());
     // // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
     if (RobotContainer.driveStick.getLeftTriggerAxis() > 0.5) {
-      handleRightTriggerPressed(-0.15);
+      SmartDashboard.putBoolean("Left click", true);
+      triggerPressed(-0.3);
     }
-    if (RobotContainer.driveStick.getLeftTriggerAxis() < 0.5) {
-      handleRightTriggerPressed(0);
+    if (RobotContainer.driveStick.getRightTriggerAxis() > 0.2) {
+      SmartDashboard.putBoolean("Right click", true);
+      triggerPressed(0.6);
     }
+
 
     if (RobotContainer.driveStick.getLeftBumperButton()) {
       intakeStart();
+    }
+    if (RobotContainer.driveStick.getRightBumperButton()) {
+      intakeStop();
     }
 
     switch(RobotContainer.driveStick.getPOV()) {
@@ -180,6 +190,9 @@ public class JoystickCommand extends Command {
 
   private void intakeStart() {
     RobotContainer.shooter.intakeStart();
+  }
+  private void intakeStop() {
+    RobotContainer.shooter.intakeStop();
   }
   private void handleUp() {
     RobotContainer.elevator.moveRotation(1.0);
