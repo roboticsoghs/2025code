@@ -137,7 +137,7 @@ public class Shooter extends SubsystemBase {
             if (firstTime) {    
                 PID.setReference(0.1, ControlType.kDutyCycle);
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(100);
                 } catch(InterruptedException e) {
                     e.printStackTrace();
                 }
