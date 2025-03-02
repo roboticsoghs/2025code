@@ -8,6 +8,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -30,10 +31,9 @@ public class Elevator extends SubsystemBase {
         // TODO: figure out revolutions of the motor needed for each level
         RESTING_POSITION(0),
         INTAKE_POSITION(-1), 
-        LEVEL_0(5),
-        LEVEL_1(10),
-        LEVEL_2(15),
-        LEVEL_3(20);
+        LEVEL_0(1),
+        LEVEL_1(5),
+        LEVEL_2(25);
 
         private final int pos;
         ElevatorPosition(int pos)  {
@@ -71,8 +71,8 @@ public class Elevator extends SubsystemBase {
     private final RelativeEncoder leftEncoder;
     private final RelativeEncoder rightEncoder;
     // SmartVelocity PID
-    private final double SmartVelocityP = 2.2;
-    private final double SmartVelocityI = 0; // 0.00003
+    private final double SmartVelocityP = 0.55; // 2.2
+    private final double SmartVelocityI = 0;
     private final double SmartVelocityD = 0;
     private final double SmartVelocityFF = 0;
 
@@ -80,19 +80,24 @@ public class Elevator extends SubsystemBase {
     private final double MaxOutput = 1;
     // min motor speed
     private final double MinOutput = -1;
+    private final double arbFeedForward = 0.125;
 
     // max motor acceleration
-    private final double maxAccel = 500;
+    private final double maxAccel = 2700;
     private final int SmartMotionID = 0;
     private int MaxMotionID = 1;
-    private final int maxVel = 900;
+    private final int maxVel = 3500;
 
     // elevator
     private ElevatorPosition position;
     private ElevatorStates isCalibrated = ElevatorStates.INITIALIZING;
 
-    // Finish up feedForward code
-    private final ElevatorFeedforward elevatorFeedforward = new ElevatorFeedforward(, ,);
+    // To Do: up feedForward code
+    private static double kS = 0.1;
+    private static double kG = 0.7;
+    private static double kV = 0; // prev 0.05
+    private static double kA = 0;
+    // private final ElevatorFeedforward feedForward = new ElevatorFeedforward(kS, kG, kV, kA);
     public final double allowedError = 0.05;
 
     public double encoderValue;
@@ -122,8 +127,8 @@ public class Elevator extends SubsystemBase {
         rightEncoder = rightMotor.getEncoder();
 
         // set idle mode for motors
-        leftConfig.idleMode(IdleMode.kBrake);
-        rightConfig.idleMode(IdleMode.kBrake);
+        leftConfig.idleMode(IdleMode.kCoast);
+        rightConfig.idleMode(IdleMode.kCoast);
 
         leftConfig.inverted(true);
         rightConfig.inverted(false);
@@ -150,11 +155,11 @@ public class Elevator extends SubsystemBase {
         // Apply PID constants to the PID controllers
         // left motor
         leftConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
-        leftConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
-        leftConfig.closedLoop.maxMotion.maxAcceleration(maxAccel);
-        leftConfig.closedLoop.maxMotion.maxVelocity(maxVel);
-        leftConfig.closedLoop.velocityFF(SmartVelocityFF);
-        leftConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError);
+        leftConfig.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD, ClosedLoopSlot.kSlot3);
+        leftConfig.closedLoop.maxMotion.maxAcceleration(maxAccel, ClosedLoopSlot.kSlot3);
+        leftConfig.closedLoop.maxMotion.maxVelocity(maxVel, ClosedLoopSlot.kSlot3);
+        leftConfig.closedLoop.velocityFF(SmartVelocityFF, ClosedLoopSlot.kSlot3);
+        leftConfig.closedLoop.maxMotion.allowedClosedLoopError(allowedError, ClosedLoopSlot.kSlot3);
 
         // right motor
         // rightConfig.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
@@ -185,7 +190,7 @@ public class Elevator extends SubsystemBase {
             switch (pos) {
                 case INTAKE_POSITION -> {
                     position = ElevatorPosition.INTAKE_POSITION;
-                    leftPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl, feedForward); // calculate necessary rotations
+                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward); // calculate necessary rotations
                     // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
                     // rightPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl);
                     SmartDashboard.putNumber("elevator revs: ", position.getValue());
@@ -194,7 +199,7 @@ public class Elevator extends SubsystemBase {
 
                 case RESTING_POSITION -> {
                     position = ElevatorPosition.RESTING_POSITION;
-                    leftPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
+                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward); // calculate necessary rotations
                     // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
                     // rightPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl);
                     SmartDashboard.putNumber("elevator revs: ", position.getValue());
@@ -203,7 +208,7 @@ public class Elevator extends SubsystemBase {
 
                 case LEVEL_0 -> {
                     position = ElevatorPosition.LEVEL_0;
-                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
+                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward); // calculate necessary rotations
                     // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl);
                     // rightPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl);
                     SmartDashboard.putNumber("elevator revs: ", position.getValue());
@@ -217,7 +222,7 @@ public class Elevator extends SubsystemBase {
                     
                     // double inch = rotationsToLinear(0.125);
                     // double rotations = 0.125 * Constants.gearRatio;
-                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
+                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward); // calculate necessary rotations
                     // rightPID.setReference(-rotations, ControlType.kMAXMotionPositionControl);
                     SmartDashboard.putNumber("elevator revs: ", position.getValue());
                 }
@@ -225,15 +230,7 @@ public class Elevator extends SubsystemBase {
                 case LEVEL_2 -> {
                     // find height in inches
                     position = ElevatorPosition.LEVEL_2;
-                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
-                    // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl);
-                    // rightPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl);
-                    SmartDashboard.putNumber("elevator revs: ", position.getValue());
-                }
-                case LEVEL_3 -> {
-                    // find height in inches
-                    position = ElevatorPosition.LEVEL_3;
-                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl); // calculate necessary rotations
+                    leftPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward); // calculate necessary rotations
                     // rightPID.setReference(-position.getValue(), ControlType.kMAXMotionPositionControl);
                     // rightPID.setReference(position.getValue(), ControlType.kMAXMotionPositionControl);
                     SmartDashboard.putNumber("elevator revs: ", position.getValue());
@@ -248,8 +245,12 @@ public class Elevator extends SubsystemBase {
 
     public void moveRotation(double rotations) {
         if(limitCheck(rotations)) {
-            leftPID.setReference(encoderValue + rotations, ControlType.kMAXMotionPositionControl);
+            // double feedValue = feedForward.calculateWithVelocities(maxVel, maxAccel);
+            // double feedForwardValue = feedForward.calculate(maxVel / 2);
+            leftPID.setReference(getLeftEncoder() + rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);
+            // leftMotor.setVoltage(feedForwardValue);
             SmartDashboard.putNumber("target pos: ", encoderValue + rotations);
+            // SmartDashboard.putNumber("feedforward voltage: ", feedForwardValue);
         }
     }
     /**
@@ -276,6 +277,12 @@ public class Elevator extends SubsystemBase {
         SmartDashboard.putNumber("left encoder: ", getLeftEncoder());
         SmartDashboard.putNumber("right encoder: ", getRightEncoder());
         encoderValue = getLeftEncoder();
+
+        // apply feedforward voltage to motor
+        // double ffVoltage = feedForward.calculate(0);
+        // leftMotor.setVoltage(ffVoltage);
+        // SmartDashboard.putNumber("ff Voltage", ffVoltage);
+
         // This method will be called once per scheduler run
         if (isCalibrated == ElevatorStates.INITIALIZING && !limitSwitch.get()) {
             // Stop the motor when limit switch is triggered
@@ -289,7 +296,8 @@ public class Elevator extends SubsystemBase {
                 leftPID.setReference(0.1, ControlType.kDutyCycle); 
             }
     
-            leftPID.setReference(0, ControlType.kMAXMotionPositionControl);
+            leftPID.setReference(0, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);
+            // leftMotor.stopMotor();
             try {
                 Thread.sleep(500);
             } catch(InterruptedException e) {

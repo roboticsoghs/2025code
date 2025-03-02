@@ -60,32 +60,31 @@ public class JoystickCommand extends Command {
       throttleValue = RobotContainer.m_operator.getRawAxis(6);
       SmartDashboard.putNumber("op board 6: ", throttleValue);
       // Constants.slowMode = !Constants.slowMode;
-      RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
+      // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
       // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
     if(throttleValue == -1){
       // rest
       // shoots coral at bottom of reef (L0)
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+      RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
       // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
     }
-    if(throttleValue <= -0.8 && throttleValue >= -0.9){
+    if(throttleValue <= -0.7 && throttleValue >= -0.8){
       // L0
+      // shoots coral at L0
+      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+    }
+    if(throttleValue <= -0.5 && throttleValue >= -0.6){
+      // L1
       // shoots coral at L1
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
     }
-    if(throttleValue <= -0.7 && throttleValue >= -0.8){
-      // L1
+    if(throttleValue <= -0.3 && throttleValue >= -0.4){
       // shoots coral at L2
       RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
     }
-    if(throttleValue <= -0.6 && throttleValue >= -0.7){
-      // shoots coral at L2
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
-    }
-    if(throttleValue <= -0.5 && throttleValue >= -0.6){
-      // shoots coral at L2
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+    if(throttleValue <= -0.1 && throttleValue >= -0.2){
+      RobotContainer.elevator.setPosition(ElevatorPosition.INTAKE_POSITION);
     }
         // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
     
@@ -101,7 +100,7 @@ public class JoystickCommand extends Command {
     // // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
     if (RobotContainer.driveStick.getLeftTriggerAxis() > 0.5) {
       SmartDashboard.putBoolean("Left click", true);
-      triggerPressed(-0.3);
+      triggerPressed(-0.15);
     }
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.2) {
       SmartDashboard.putBoolean("Right click", true);

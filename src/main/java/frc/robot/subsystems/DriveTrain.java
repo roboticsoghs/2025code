@@ -309,6 +309,8 @@ public class DriveTrain extends SubsystemBase {
      * @param speed percent output for both motors
      */
     public void setAllMotorsSpeed(double leftSpeed, double rightSpeed) {
+        // double left = Math.signum(leftSpeed) * Math.log(Math.abs(leftSpeed));
+        // double right = Math.signum(rightSpeed) * Math.log(Math.abs(rightSpeed));
         setLeftSideMotorSpeed(leftSpeed);
         setRightSideMotorSpeed(rightSpeed);
     }
