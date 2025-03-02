@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Elevator;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
     private final SparkMax motor;
@@ -50,6 +52,7 @@ public class Shooter extends SubsystemBase {
     private final int maxVel = 4075;
 
     private boolean isLoaded;
+    private boolean firstTime = false;
     private boolean intakingLoad;
     // elevator
     private double restingPosition;
@@ -74,7 +77,7 @@ public class Shooter extends SubsystemBase {
         Encoder = motor.getEncoder();
 
         // set idle mode for motors
-        config.idleMode(IdleMode.kCoast);
+        config.idleMode(IdleMode.kBrake);
 
         // set voltage compensation
         config.voltageCompensation(12.0);
@@ -131,11 +134,24 @@ public class Shooter extends SubsystemBase {
     public void periodic() {
         if(getLimitSwitch()) {
             isLoaded = true;
+            if (firstTime) {    
+                PID.setReference(0.1, ControlType.kDutyCycle);
+                try {
+                    Thread.sleep(200);
+                } catch(InterruptedException e) {
+                    e.printStackTrace();
+                }
+                PID.setReference(0, ControlType.kDutyCycle);
+            }
+            firstTime = false;
         } else {
             isLoaded = false;
         }
         if(intakingLoad && isLoaded == false) {
+            // RobotContainer.elevator.move(-0.6);
+            // RobotContainer.elevator.move(0.5);
             PID.setReference(0.1, ControlType.kDutyCycle);
+            firstTime = true;
         } else {
             intakingLoad = false;
         }

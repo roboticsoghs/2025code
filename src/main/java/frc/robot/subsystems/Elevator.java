@@ -30,16 +30,16 @@ public class Elevator extends SubsystemBase {
         // position value is in revolutions relative to RESTING_POSITION
         // TODO: figure out revolutions of the motor needed for each level
         RESTING_POSITION(0),
-        INTAKE_POSITION(-1), 
+        INTAKE_POSITION(-0.5), 
         LEVEL_0(1),
-        LEVEL_1(5),
-        LEVEL_2(25);
+        LEVEL_1(8),
+        LEVEL_2(46);
 
-        private final int pos;
-        ElevatorPosition(int pos)  {
+        private final double pos;
+        ElevatorPosition(double pos)  {
             this.pos = pos;
         }
-        public int getValue() { return pos; }
+        public double getValue() { return pos; }
     }
 
     public static enum ElevatorStates { // Different states that determines what stage the arm is in.
@@ -127,8 +127,8 @@ public class Elevator extends SubsystemBase {
         rightEncoder = rightMotor.getEncoder();
 
         // set idle mode for motors
-        leftConfig.idleMode(IdleMode.kCoast);
-        rightConfig.idleMode(IdleMode.kCoast);
+        leftConfig.idleMode(IdleMode.kBrake);
+        rightConfig.idleMode(IdleMode.kBrake);
 
         leftConfig.inverted(true);
         rightConfig.inverted(false);
@@ -250,6 +250,17 @@ public class Elevator extends SubsystemBase {
             leftPID.setReference(getLeftEncoder() + rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);
             // leftMotor.setVoltage(feedForwardValue);
             SmartDashboard.putNumber("target pos: ", encoderValue + rotations);
+            // SmartDashboard.putNumber("feedforward voltage: ", feedForwardValue);
+        }
+    }
+
+    public void move(double rotations) {
+        if(limitCheck(rotations)) {
+            // double feedValue = feedForward.calculateWithVelocities(maxVel, maxAccel);
+            // double feedForwardValue = feedForward.calculate(maxVel / 2);
+            leftPID.setReference(rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);
+            // leftMotor.setVoltage(feedForwardValue);
+            SmartDashboard.putNumber("target pos: ", rotations);
             // SmartDashboard.putNumber("feedforward voltage: ", feedForwardValue);
         }
     }

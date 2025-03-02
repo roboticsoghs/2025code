@@ -104,7 +104,7 @@ public class JoystickCommand extends Command {
     }
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.2) {
       SmartDashboard.putBoolean("Right click", true);
-      triggerPressed(0.6);
+      triggerPressed(0.2);
     }
 
 
