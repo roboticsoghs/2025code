@@ -182,7 +182,7 @@ public class JoystickCommand extends Command {
     // RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
     if(slowModeMultiplier) {
-      RobotContainer.drivetrain.setAllMotorsSpeed(0.8 * leftDriveTrainSpeed, 0.8 * rightDriveTrainSpeed);
+      RobotContainer.drivetrain.setAllMotorsSpeed(0.3 * leftDriveTrainSpeed, 0.3 * rightDriveTrainSpeed);
     } else {
       RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
     }
