@@ -93,7 +93,7 @@ public class DriveTrain extends SubsystemBase {
     // private final double MinOutput = -1; // unused
 
     // max motor acceleration
-    private final double maxAccel = 1000000000;
+    private final double maxAccel = 4000;
 
     private double encoderVal = 0;
     // private final int SmartMotionID = 0; // unused
