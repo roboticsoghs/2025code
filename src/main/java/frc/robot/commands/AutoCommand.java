@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.subsystems.Elevator.ElevatorPosition;
 
 public class AutoCommand extends Command {
     private boolean finished = false;
@@ -31,29 +32,32 @@ public class AutoCommand extends Command {
 
             // Get offsets
             double offSetX = RobotContainer.visionSystem.getX();
-            double offSetY = RobotContainer.visionSystem.getY();
+            double offSetZ = RobotContainer.visionSystem.getZ();
+
+            double distToMove = Constants.rightAlignReef - (offSetX * 39.37);
+            double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
+
+            SmartDashboard.putNumber("amount to move: ", rotations);
+
+            RobotContainer.drivetrain.stopMotor();
+            RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+
+            // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+            // try {
+            //     Thread.sleep(600);
+            // } catch(InterruptedException e) {
+            //     e.printStackTrace();
+            // }
+            // RobotContainer.shooter.shoot_that_fucker(0.5);
+            // try {
+            //     Thread.sleep(300);
+            // } catch(InterruptedException e) {
+            //     e.printStackTrace();
+            // }
+            // RobotContainer.shooter.shoot_that_fucker(0);
 
             // Stop the robot when the tag is detected
-            RobotContainer.drivetrain.stopMotor();
-
-            // Calculate horizontal distance to tag
-            double horizontalDistance = Constants.offSetHeight * Math.tan(Math.toRadians(offSetY - 8));
-            lineUpWithAprilTag = position + RobotContainer.drivetrain.lineartoRotations(horizontalDistance / Math.tan(Math.toRadians(offSetX)));
-
-            // Move to line up with the AprilTag
-            if (!linedUp) {
-                SmartDashboard.putNumber("Aligning Distance", lineUpWithAprilTag);
-                position = lineUpWithAprilTag;
-                finalPosition = position;
-                RobotContainer.drivetrain.setAllMotorsPosition(
-                    // lineUpWithAprilTag,
-                    // lineUpWithAprilTag
-                    4,4
-                );
-                linedUp = true;
-                // initialEncoderPosition = RobotContainer.drivetrain.getleftFrontEncoder(); // Record encoder position
-            }
-
+            // RobotContainer.drivetrain.stopMotor();
         } else {
             SmartDashboard.putBoolean("AprilTag Seen", false);
 
@@ -62,21 +66,6 @@ public class AutoCommand extends Command {
                 RobotContainer.drivetrain.setAllMotorsPosition(position - 1, position - 1);
                 position--;
             }
-        }
-
-        // Move back 2 feet after aligning
-        if (linedUp && !movedBack) {
-            double targetDistance = finalPosition + RobotContainer.drivetrain.lineartoRotations(24); // 24 inches (2 feet)
-            SmartDashboard.putNumber("Target Dist: ", targetDistance);
-            double currentPosition = Math.abs(RobotContainer.drivetrain.getleftFrontEncoder());
-
-            // if (currentPosition <= targetDistance) {
-            //     RobotContainer.drivetrain.stopMotor();
-            //     movedBack = true;
-            //     finished = true;
-            // } else {
-                // RobotContainer.drivetrain.setAllMotorsPosition(targetDistance, targetDistance);
-            // }
         }
     }
 

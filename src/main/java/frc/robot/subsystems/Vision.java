@@ -9,16 +9,17 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 
 public class Vision extends SubsystemBase {
     private double x;
     private double y;
-    private double area;
+    private double z;
+    private double[] camera = new double[6];
 
     NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    NetworkTableEntry tx = table.getEntry("tx");
-    NetworkTableEntry ty = table.getEntry("ty");
-    NetworkTableEntry ta = table.getEntry("ta");
+    NetworkTableEntry cameraPose = table.getEntry("targetpose_cameraspace");
 
   /** Creates a new ExampleSubsystem. */
   public Vision() {
@@ -29,27 +30,51 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     //read values periodically
-    x = tx.getDouble(0.0);
+    // camera = cameraPose.getDoubleArray({0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
+    double[] defaultValue = {0,0,0,0,0,0};
+    camera = cameraPose.getDoubleArray(defaultValue);
+    x = camera[0];
     // Ignore y and area
-    y = ty.getDouble(0.0);
-    area = ta.getDouble(0.0);
+    y = camera[1];
+    z = camera[2];
 
     //post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
-    SmartDashboard.putNumber("LimelightArea", area);
+    SmartDashboard.putNumber("LimelightZ", z);
   }
 
   public boolean isApriltag() {
-    return x != 0 && y != 0;
+    return x != 0 && z != 0;
   }
 
   public double getX() {
     return x;
   }
 
-  public double getY() {
-    return y;
+  public double getZ() {
+    return z;
+  }
+
+  public void alignLeftSide() {
+    double distToMove = Constants.leftAlignReef - (x * 39.37);
+    double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
+
+    RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+  }
+
+  public void alignRightSide() {
+    double distToMove = Constants.rightAlignReef - (x * 39.37);
+    double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
+
+    RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+  }
+
+  public void alignCenterSide() {
+    double distToMove = Constants.reefCenter + (x * 39.37);
+    double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
+
+    RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
   }
 
   @Override

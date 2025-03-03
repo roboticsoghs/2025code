@@ -37,6 +37,9 @@ public final class Constants {
 
     // operator board
     public static int INTAKE_PORT = 8;
+    public static int LEFT_ALIGN_PORT = 7;
+    public static int RIGHT_ALIGN_PORT = 6;
+    public static int CENTER_ALIGN_PORT = 1;
 
     // general
     public static double ElevatorgearRatio = 12; 
@@ -47,6 +50,11 @@ public final class Constants {
     public static double offSetHeight = 3.5;
     public static boolean slowMode = false;
     public static double slowModeMultipler = 0.3;
+
+    // inches
+    public static double leftAlignReef = -5;
+    public static double reefCenter = -5.03; 
+    public static double rightAlignReef = -16.27;
 
     /**
      * Determines the number of encoder ticks necessary for drivetrain to turn at certain angle

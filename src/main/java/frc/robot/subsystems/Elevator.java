@@ -30,8 +30,8 @@ public class Elevator extends SubsystemBase {
         // position value is in revolutions relative to RESTING_POSITION
         // TODO: figure out revolutions of the motor needed for each level
         RESTING_POSITION(0),
-        INTAKE_POSITION(-0.5), 
-        LEVEL_0(1),
+        INTAKE_POSITION(-0.3), 
+        LEVEL_0(3),
         LEVEL_1(8),
         LEVEL_2(46);
 
@@ -304,7 +304,7 @@ public class Elevator extends SubsystemBase {
                 SmartDashboard.putBoolean("elevator state: ", false);
                 SmartDashboard.putNumber("left encoder: ", getLeftEncoder());
                 SmartDashboard.putNumber("right encoder: ", getRightEncoder());
-                leftPID.setReference(0.1, ControlType.kDutyCycle); 
+                leftPID.setReference(0.1, ControlType.kDutyCycle, ClosedLoopSlot.kSlot3, arbFeedForward); 
             }
     
             leftPID.setReference(0, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);

@@ -41,6 +41,9 @@ public class RobotContainer {
 
   // operator board buttons
   public static JoystickButton intakeButton = new JoystickButton(m_operator, Constants.INTAKE_PORT);
+  public static JoystickButton leftAlignButton = new JoystickButton(m_operator, Constants.LEFT_ALIGN_PORT);
+  public static JoystickButton rightAlignButton = new JoystickButton(m_operator, Constants.RIGHT_ALIGN_PORT);
+  public static JoystickButton centerAlignButton = new JoystickButton(m_operator, Constants.CENTER_ALIGN_PORT);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {

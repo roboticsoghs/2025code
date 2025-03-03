@@ -54,6 +54,15 @@ public class JoystickCommand extends Command {
       slowModeMultiplier = !slowModeMultiplier;
     }
     SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
+    if(RobotContainer.centerAlignButton.getAsBoolean()) {
+      RobotContainer.visionSystem.alignCenterSide();
+    }
+    if(RobotContainer.leftAlignButton.getAsBoolean()) {
+      RobotContainer.visionSystem.alignLeftSide();
+    }
+    if(RobotContainer.rightAlignButton.getAsBoolean()) {
+      RobotContainer.visionSystem.alignRightSide();
+    }
     // X, A, B, Y
     if(RobotContainer.m_operator.isConnected()){
       // switches between fast and slow speed
@@ -104,7 +113,7 @@ public class JoystickCommand extends Command {
     }
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.2) {
       SmartDashboard.putBoolean("Right click", true);
-      triggerPressed(0.2);
+      triggerPressed(0.5);
     }
 
 
