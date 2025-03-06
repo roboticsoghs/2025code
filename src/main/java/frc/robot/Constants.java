@@ -36,7 +36,7 @@ public final class Constants {
     public static int UPPER_LOWER_LIMIT = -1;
 
     // operator board
-    public static int SLOWMODE_PORT = 8;
+    public static int SLOWMODE_PORT = 9;
     public static int LEFT_ALIGN_PORT = 7;
     public static int RIGHT_ALIGN_PORT = 6;
     public static int CENTER_ALIGN_PORT = 1;
