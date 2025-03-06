@@ -52,6 +52,7 @@ public class JoystickCommand extends Command {
   public void execute() {
     if(RobotContainer.slowmodeButton.getAsBoolean()) {
       slowModeMultiplier = !slowModeMultiplier;
+      SmartDashboard.putBoolean("slowMode", slowModeMultiplier);
     }
     SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
     if(RobotContainer.centerAlignButton.getAsBoolean()) {
