@@ -29,8 +29,8 @@ public class Elevator extends SubsystemBase {
     public static enum ElevatorPosition { //Different states that determines what stage the arm is in.
         // position value is in revolutions relative to RESTING_POSITION
         // TODO: figure out revolutions of the motor needed for each level
-        RESTING_POSITION(0),
-        INTAKE_POSITION(-0.3), 
+        RESTING_POSITION(0.2),
+        INTAKE_POSITION(-0.1), 
         LEVEL_0(3),
         LEVEL_1(8),
         LEVEL_2(46);

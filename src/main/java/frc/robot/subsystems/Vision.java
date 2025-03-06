@@ -30,11 +30,11 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     //read values periodically
-    // camera = cameraPose.getDoubleArray({0.0, 0.0, 0.0, 0.0, 0.0, 0.0});
-    double[] defaultValue = {0,0,0,0,0,0};
+    double[] defaultValue = {0,0,0,0,0,0}; // default value require by getDoubleArray
     camera = cameraPose.getDoubleArray(defaultValue);
+
+    // limelight 3D offsets relative to camera
     x = camera[0];
-    // Ignore y and area
     y = camera[1];
     z = camera[2];
 
@@ -42,20 +42,38 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightZ", z);
+
+    // output if the limelight sees an AprilTag
+    SmartDashboard.putBoolean("AprilTag Seen", isApriltag());
   }
 
+  /**
+   * 
+   * @return Whether the Limelight detects an AprilTag
+   */
   public boolean isApriltag() {
     return x != 0 && z != 0;
   }
 
+  /**
+   * 
+   * @return The x offset of the AprilTag relative to the Limelight
+   */
   public double getX() {
     return x;
   }
 
+  /**
+   * 
+   * @return The z offset of the AprilTag relative to the Limelight
+   */
   public double getZ() {
     return z;
   }
 
+  /**
+   * Auto aligns the robot to the left reef pole
+   */
   public void alignLeftSide() {
     double distToMove = Constants.leftAlignReef - (x * 39.37);
     double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
@@ -63,6 +81,9 @@ public class Vision extends SubsystemBase {
     RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
   }
 
+  /**
+   * Auto aligns the robot to the right reef pole
+   */
   public void alignRightSide() {
     double distToMove = Constants.rightAlignReef - (x * 39.37);
     double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
@@ -70,6 +91,9 @@ public class Vision extends SubsystemBase {
     RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
   }
 
+  /**
+   * Auto aligns the robot between the reef poles
+   */
   public void alignCenterSide() {
     double distToMove = Constants.reefCenter + (x * 39.37);
     double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);

@@ -33,14 +33,14 @@ public class RobotContainer {
 
   // initialize subsystems
   public static final DriveTrain drivetrain = new DriveTrain();
-  public static final Elevator elevator = new Elevator(); // temp disabled
-  public static final Shooter shooter = new Shooter(); // temp disabled
+  public static final Elevator elevator = new Elevator();
+  public static final Shooter shooter = new Shooter();
   public static final XboxController driveStick = new XboxController(0);
   public static final Joystick m_operator = new Joystick(1);
   public static final Vision visionSystem = new Vision();
 
   // operator board buttons
-  public static JoystickButton intakeButton = new JoystickButton(m_operator, Constants.INTAKE_PORT);
+  public static JoystickButton slowmodeButton = new JoystickButton(m_operator, Constants.SLOWMODE_PORT);
   public static JoystickButton leftAlignButton = new JoystickButton(m_operator, Constants.LEFT_ALIGN_PORT);
   public static JoystickButton rightAlignButton = new JoystickButton(m_operator, Constants.RIGHT_ALIGN_PORT);
   public static JoystickButton centerAlignButton = new JoystickButton(m_operator, Constants.CENTER_ALIGN_PORT);
