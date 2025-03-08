@@ -32,7 +32,7 @@ public class Elevator extends SubsystemBase {
         RESTING_POSITION(0.2),
         INTAKE_POSITION(0.2), 
         LEVEL_0(3),
-        LEVEL_1(8),
+        LEVEL_1(13),
         LEVEL_2(46);
 
         private final double pos;
@@ -244,26 +244,27 @@ public class Elevator extends SubsystemBase {
     }
 
     public void moveRotation(double rotations) {
-        if(limitCheck(rotations)) {
+        if(limitCheck(encoderValue + rotations)) {
             // double feedValue = feedForward.calculateWithVelocities(maxVel, maxAccel);
             // double feedForwardValue = feedForward.calculate(maxVel / 2);
-            leftPID.setReference(getLeftEncoder() + rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);
-            // leftMotor.setVoltage(feedForwardValue);
+            leftPID.setReference(encoderValue + rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);
+            
             SmartDashboard.putNumber("target pos: ", encoderValue + rotations);
+            // leftMotor.setVoltage(feedForwardValue);
             // SmartDashboard.putNumber("feedforward voltage: ", feedForwardValue);
         }
     }
 
-    public void move(double rotations) {
-        if(limitCheck(rotations)) {
-            // double feedValue = feedForward.calculateWithVelocities(maxVel, maxAccel);
-            // double feedForwardValue = feedForward.calculate(maxVel / 2);
-            leftPID.setReference(rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);
-            // leftMotor.setVoltage(feedForwardValue);
-            SmartDashboard.putNumber("target pos: ", rotations);
-            // SmartDashboard.putNumber("feedforward voltage: ", feedForwardValue);
-        }
-    }
+    // public void move(double rotations) {
+    //     if(limitCheck(rotations)) {
+    //         // double feedValue = feedForward.calculateWithVelocities(maxVel, maxAccel);
+    //         // double feedForwardValue = feedForward.calculate(maxVel / 2);
+    //         leftPID.setReference(rotations, ControlType.kMAXMotionPositionControl, ClosedLoopSlot.kSlot3, arbFeedForward);
+    //         // leftMotor.setVoltage(feedForwardValue);
+    //         SmartDashboard.putNumber("target pos: ", rotations);
+    //         // SmartDashboard.putNumber("feedforward voltage: ", feedForwardValue);
+    //     }
+    // }
     /**
      * @return height in inches
      */

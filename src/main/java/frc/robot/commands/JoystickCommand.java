@@ -19,6 +19,7 @@ public class JoystickCommand extends Command {
   private double rightSpeed = 0;
   private boolean slowModeMultiplier = false;
   private boolean finished = false;
+  private boolean ignoreOp;
   private double throttleValue;
   // private final POVButton dpadRight = new POVButton(driveStick, 90);
   // private final POVButton dpadDown = new POVButton(RobotContainer.driveStick, 180);
@@ -33,6 +34,7 @@ public class JoystickCommand extends Command {
     addRequirements(RobotContainer.drivetrain, RobotContainer.shooter, RobotContainer.elevator);
     // addRequirements(RobotContainer.drivetrain);
     throttleValue = 0;
+    ignoreOp = false;
     slowModeMultiplier = false;
     // addRequirements(RobotContainer.elevator);
   }
@@ -50,20 +52,43 @@ public class JoystickCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(RobotContainer.slowmodeButton.getAsBoolean()) {
+    if(RobotContainer.driveStick.getAButtonPressed()) {
       slowModeMultiplier = !slowModeMultiplier;
       SmartDashboard.putBoolean("slowMode", slowModeMultiplier);
+    } else {
+      SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
     }
-    SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
     if(RobotContainer.centerAlignButton.getAsBoolean()) {
+      SmartDashboard.putBoolean("Aligning center", true);
       RobotContainer.visionSystem.alignCenterSide();
+      try {
+        Thread.sleep(3000);
+      } catch(InterruptedException e) {
+          e.printStackTrace();
+      }
+      triggerPressed(0.7);
     }
+    
+    SmartDashboard.putBoolean("Aligning center", false);
     if(RobotContainer.leftAlignButton.getAsBoolean()) {
       RobotContainer.visionSystem.alignLeftSide();
+      try {
+        Thread.sleep(3000);
+      } catch(InterruptedException e) {
+          e.printStackTrace();
+      }
+      triggerPressed(0.7);
     }
     if(RobotContainer.rightAlignButton.getAsBoolean()) {
       RobotContainer.visionSystem.alignRightSide();
+      try {
+        Thread.sleep(3000);
+      } catch(InterruptedException e) {
+          e.printStackTrace();
+      }
+      triggerPressed(0.7);
     }
+
     if(RobotContainer.m_operator.isConnected()){
       // switches between fast and slow speed
       throttleValue = RobotContainer.m_operator.getRawAxis(6);
@@ -72,28 +97,30 @@ public class JoystickCommand extends Command {
       // RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
       // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
-    if(throttleValue == -1){
-      // rest
-      // shoots coral at bottom of reef (L0)
-      RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
-      // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
-    }
-    if(throttleValue <= -0.7 && throttleValue >= -0.8){
-      // L0
-      // shoots coral at L0
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
-    }
-    if(throttleValue <= -0.5 && throttleValue >= -0.6){
-      // L1
-      // shoots coral at L1
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
-    }
-    if(throttleValue <= -0.3 && throttleValue >= -0.4){
-      // shoots coral at L2
-      RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
-    }
-    if(throttleValue <= -0.1 && throttleValue >= -0.2){
-      RobotContainer.elevator.setPosition(ElevatorPosition.INTAKE_POSITION);
+    if (!ignoreOp) {
+      if(throttleValue == -1){
+        // rest
+        // shoots coral at bottom of reef (L0)
+        RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
+        // RobotContainer.shooter.shoot_that_fucker(0);// TODO: get value
+      }
+      if(throttleValue <= -0.7 && throttleValue >= -0.8){
+        // L0
+        // shoots coral at L0
+        RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+      }
+      if(throttleValue <= -0.5 && throttleValue >= -0.6){
+        // L1
+        // shoots coral at L1
+        RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_1);
+      }
+      if(throttleValue <= -0.3 && throttleValue >= -0.4){
+        // shoots coral at L2
+        RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_2);
+      }
+      if(throttleValue <= -0.1 && throttleValue >= -0.2){
+        RobotContainer.elevator.setPosition(ElevatorPosition.INTAKE_POSITION);
+      }
     }
         // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
     
@@ -101,7 +128,7 @@ public class JoystickCommand extends Command {
       SmartDashboard.putBoolean("Left click", false);
       triggerPressed(0);
     }
-    if (RobotContainer.driveStick.getRightTriggerAxis() < 0.2) {
+    if (RobotContainer.driveStick.getRightTriggerAxis() < 0.5) {
       SmartDashboard.putBoolean("Right click", false);
       triggerPressed(0);
     }
@@ -111,9 +138,9 @@ public class JoystickCommand extends Command {
       SmartDashboard.putBoolean("Left click", true);
       triggerPressed(-0.15);
     }
-    if (RobotContainer.driveStick.getRightTriggerAxis() > 0.2) {
+    if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
       SmartDashboard.putBoolean("Right click", true);
-      triggerPressed(0.5);
+      handleRightTriggerPressed(0.7);
     }
 
 
@@ -126,12 +153,16 @@ public class JoystickCommand extends Command {
 
     switch(RobotContainer.driveStick.getPOV()) {
       case 0:
+        ignoreOp = true;
         handleUp();
+        break;
       case 180:
+        ignoreOp = true;
         handleDown();
+        break;
     }
 
-
+    SmartDashboard.putBoolean("Ignore Operator", ignoreOp);
     // Get the value of the left Y axis (left joystick vertical movement)
     double leftAxisValue = -RobotContainer.driveStick.getLeftY();
     if (Math.abs(leftAxisValue) > 0.03) { // Apply a deadband
@@ -153,7 +184,7 @@ public class JoystickCommand extends Command {
     }
 
     // Set the motor speeds
-    double scalingConstant = 0.8;
+    double scalingConstant = 1;
     
     leftSpeed = Math.signum(leftSpeed) * (Math.log(1 + scalingConstant * Math.abs(leftSpeed)) / Math.log(1 + scalingConstant));
     // rightSpeed = Math.signum(rightSpeed) * (Math.log(1 + scalingConstant * Math.abs(rightSpeed)) / Math.log(1 + scalingConstant));
@@ -190,6 +221,12 @@ public class JoystickCommand extends Command {
 
   private void handleRightTriggerPressed(double speed) {
     RobotContainer.shooter.shoot_that_fucker(speed);
+    try {
+      Thread.sleep(750);
+    } catch(InterruptedException e) {
+      e.printStackTrace();
+    }
+    ignoreOp = false;
   }
 
   private void triggerPressed(double speed) {

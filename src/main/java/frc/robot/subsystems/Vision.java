@@ -75,30 +75,36 @@ public class Vision extends SubsystemBase {
    * Auto aligns the robot to the left reef pole
    */
   public void alignLeftSide() {
-    double distToMove = Constants.leftAlignReef - (x * 39.37);
-    double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
+    if(isApriltag()) {
+      double distToMove = Constants.leftAlignReef - (getX() * 39.37);
+      double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
 
-    RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+    }
   }
 
   /**
    * Auto aligns the robot to the right reef pole
    */
   public void alignRightSide() {
-    double distToMove = Constants.rightAlignReef - (x * 39.37);
-    double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
+    if(isApriltag()) {
+      double distToMove = Constants.rightAlignReef - (getX() * 39.37);
+      double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
 
-    RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+    }
   }
 
   /**
    * Auto aligns the robot between the reef poles
    */
   public void alignCenterSide() {
-    double distToMove = Constants.reefCenter + (x * 39.37);
-    double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
-
-    RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+    if(isApriltag()) {
+      double distToMove = Constants.reefCenter + (getX() * 39.37);
+      double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
+      SmartDashboard.putNumber("Aligning rotations", rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(50, 50);
+    }
   }
 
   @Override

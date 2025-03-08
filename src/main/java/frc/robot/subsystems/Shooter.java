@@ -128,6 +128,11 @@ public class Shooter extends SubsystemBase {
         //     isLoaded = false;
         // }
         PID.setReference(speed, ControlType.kDutyCycle);
+        // try {
+        //     Thread.sleep(2000);
+        //   } catch(InterruptedException e) {
+        //       e.printStackTrace();
+        //   }
     }
 
     @Override
@@ -143,13 +148,13 @@ public class Shooter extends SubsystemBase {
                 }
                 PID.setReference(0, ControlType.kDutyCycle);
             }
+            SmartDashboard.putBoolean("Intake complete", true);
             firstTime = false;
         } else {
+            SmartDashboard.putBoolean("Intake complete", false);
             isLoaded = false;
         }
         if(intakingLoad && isLoaded == false) {
-            // RobotContainer.elevator.move(-0.6);
-            // RobotContainer.elevator.move(0.5);
             PID.setReference(0.1, ControlType.kDutyCycle);
             firstTime = true;
         } else {
