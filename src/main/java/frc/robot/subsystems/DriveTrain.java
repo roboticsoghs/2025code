@@ -9,7 +9,6 @@ import com.revrobotics.spark.ClosedLoopSlot;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.revrobotics.spark.config.ClosedLoopConfig.FeedbackSensor;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -29,22 +28,6 @@ public class DriveTrain extends SubsystemBase {
     // private final DifferentialDriveOdometry odometry;
     // private final DifferentialDriveKinematics kinematics;
     private AnalogGyro gyro = new AnalogGyro(0); // DIO port
-    // AutoBuilder.configure(
-    //     this::getPose, // Robot pose supplier (returns the current robot pose)
-    //     this::resetPose, // Method to reset odometry (called if your auto has a starting pose)
-    //     this::getRobotRelativeSpeeds, // ChassisSpeeds supplier. Must be robot-relative.
-    //     (speeds, feedforwards) -> setAllMotorsSpeed(speeds, speeds), // Method that will drive the robot using ROBOT RELATIVE ChassisSpeeds
-    //     PPLTVController(0.02), // Path following controller for differential drive
-    //     config, // Robot configuration (e.g., max speeds, robot dimensions)
-    //     () -> {
-    //         // Boolean supplier that controls when the path will be mirrored for the red alliance
-    //         // This will flip the path being followed to the red side of the field.
-    //         // THE ORIGIN WILL REMAIN ON THE BLUE SIDE.
-    //         DriverStation.Alliance alliance = DriverStation.getAlliance();
-    //         return alliance == DriverStation.Alliance.Red; // Return true if it's the red alliance
-    //     },
-    //     this // Reference to this subsystem to set requirements
-    // );
     
     // motors
     private final SparkMax leftFrontMotor;
@@ -82,8 +65,8 @@ public class DriveTrain extends SubsystemBase {
     private final double SmartPositionD = 0;
     private final double SmartPositionFF = 0;
 
-    private final double SmartPositionMaxAccel = 200;
-    private final double SmartPositionMaxVel = 500;
+    private final double SmartPositionMaxAccel = 2700;
+    private final double SmartPositionMaxVel = 3500;
 
     private final double SmartPositionAllowedError = lineartoRotations(3);
 
@@ -423,11 +406,21 @@ public class DriveTrain extends SubsystemBase {
         return encoderVal;
     }
 
+    /**
+     * 
+     * @param rotations
+     * @return Converts rotations to linear inches
+     */
     public double rotationsToLinear(double rotations) {
         double actualRotations = rotations / Constants.DriveTrainGearRatio;
         return (2 * Math.PI * Constants.DriveTrainWheelRadius) * actualRotations;
     }
 
+    /**
+     * 
+     * @param inches
+     * @return Converts linear inches to rotations
+     */
     public double lineartoRotations(double inches) {
         double bigRotations = inches / (2 * Math.PI * Constants.DriveTrainWheelRadius);
         return bigRotations * Constants.DriveTrainGearRatio;
@@ -437,6 +430,9 @@ public class DriveTrain extends SubsystemBase {
         return error;
     }
 
+    /**
+     * Stops all drivetrain motors
+     */
     public void stopMotor() {
         leftFrontMotor.stopMotor();
         rightFrontMotor.stopMotor();

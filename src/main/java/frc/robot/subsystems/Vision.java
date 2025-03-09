@@ -13,15 +13,17 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class Vision extends SubsystemBase {
-    private double x;
-    private double y;
-    private double z;
-    private double[] camera = new double[6];
+  private double x;
+  private double y;
+  private double z;
+  private double pitch;
+  private double yaw;
+  private double roll;
+  private double[] camera = new double[6];
 
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-    NetworkTableEntry cameraPose = table.getEntry("targetpose_cameraspace");
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  NetworkTableEntry cameraPose = table.getEntry("targetpose_cameraspace");
 
-  /** Creates a new ExampleSubsystem. */
   public Vision() {
     System.out.println("We are cooked!");
   }
@@ -30,18 +32,27 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     //read values periodically
-    double[] defaultValue = {0,0,0,0,0,0}; // default value require by getDoubleArray
+    double[] defaultValue = {0,0,0,0,0,0}; // default value required by getDoubleArray
     camera = cameraPose.getDoubleArray(defaultValue);
 
     // limelight 3D offsets relative to camera
     x = camera[0];
     y = camera[1];
     z = camera[2];
+    pitch = camera[3];
+    yaw = camera[4];
+    roll = camera[5];
+
+    // angleX = ca
 
     //post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightZ", z);
+
+    SmartDashboard.putNumber("Limelight Pitch", pitch);
+    SmartDashboard.putNumber("Limelight Yaw", yaw);
+    SmartDashboard.putNumber("Limelight Roll", roll);
 
     // output if the limelight sees an AprilTag
     SmartDashboard.putBoolean("AprilTag Seen", isApriltag());
@@ -57,7 +68,7 @@ public class Vision extends SubsystemBase {
 
   /**
    * 
-   * @return The x offset of the AprilTag relative to the Limelight
+   * @return The x offset of the AprilTag relative to the Limelight (in meters)
    */
   public double getX() {
     return x;
@@ -65,10 +76,22 @@ public class Vision extends SubsystemBase {
 
   /**
    * 
-   * @return The z offset of the AprilTag relative to the Limelight
+   * @return The z offset of the AprilTag relative to the Limelight (in meters)
    */
   public double getZ() {
     return z;
+  }
+
+  public double getPitch() {
+    return pitch;
+  }
+
+  public double getYaw() {
+    return yaw;
+  }
+
+  public double getRoll() {
+    return roll;
   }
 
   /**
@@ -79,7 +102,8 @@ public class Vision extends SubsystemBase {
       double distToMove = Constants.leftAlignReef - (getX() / 39.37);
       double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
       RobotContainer.drivetrain.resetAllEncoders();
-      RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+      SmartDashboard.putNumber("rotations to move", rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
     }
   }
 
@@ -104,7 +128,8 @@ public class Vision extends SubsystemBase {
       double distToMove = Constants.reefCenter - (getX() / 39.37);
       double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
       RobotContainer.drivetrain.resetAllEncoders();
-      RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
+      SmartDashboard.putNumber("rotations to move", rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
     }
   }
 
