@@ -59,7 +59,6 @@ public class JoystickCommand extends Command {
       SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
     }
     if(RobotContainer.centerAlignButton.getAsBoolean()) {
-      SmartDashboard.putBoolean("Aligning center", true);
       RobotContainer.visionSystem.alignCenterSide();
       try {
         Thread.sleep(3000);
@@ -68,8 +67,6 @@ public class JoystickCommand extends Command {
       }
       triggerPressed(0.7);
     }
-    
-    SmartDashboard.putBoolean("Aligning center", false);
     if(RobotContainer.leftAlignButton.getAsBoolean()) {
       RobotContainer.visionSystem.alignLeftSide();
       try {
@@ -222,7 +219,7 @@ public class JoystickCommand extends Command {
   private void handleRightTriggerPressed(double speed) {
     RobotContainer.shooter.shoot_that_fucker(speed);
     try {
-      Thread.sleep(750);
+      Thread.sleep(500);
     } catch(InterruptedException e) {
       e.printStackTrace();
     }

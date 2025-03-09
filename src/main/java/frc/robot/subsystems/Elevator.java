@@ -31,8 +31,8 @@ public class Elevator extends SubsystemBase {
         // TODO: figure out revolutions of the motor needed for each level
         RESTING_POSITION(0.2),
         INTAKE_POSITION(0.2), 
-        LEVEL_0(3),
-        LEVEL_1(13),
+        LEVEL_0(9.8),
+        LEVEL_1(14.5),
         LEVEL_2(46);
 
         private final double pos;

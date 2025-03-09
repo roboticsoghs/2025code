@@ -32,13 +32,13 @@ public final class Constants {
     public static int LEVEL_2_HEIGHT = 8;
     public static int LEVEL_3_HEIGHT = 8;
 
-    public static int UPPER_HARD_LIMIT = 49;
-    public static int UPPER_LOWER_LIMIT = -1;
+    public static int UPPER_HARD_LIMIT = 50;
+    public static int UPPER_LOWER_LIMIT = -2;
 
     // operator board
     public static int SLOWMODE_PORT = 9;
-    public static int LEFT_ALIGN_PORT = 7;
-    public static int RIGHT_ALIGN_PORT = 6;
+    public static int LEFT_ALIGN_PORT = 6;
+    public static int RIGHT_ALIGN_PORT = 7;
     public static int CENTER_ALIGN_PORT = 1;
     public static int UNSTUCK_CORAL_PORT = 2;
 
@@ -53,9 +53,9 @@ public final class Constants {
     public static double slowModeMultipler = 0.3;
 
     // inches
-    public static double leftAlignReef = 5;
-    public static double reefCenter = -5.03; 
-    public static double rightAlignReef = -16.27;
+    public static double leftAlignReef = -4.84; // prev: -4.5
+    public static double reefCenter = -13.780; // prev: -2.5
+    public static double rightAlignReef = -20.15; // prev: -32.27
 
     /**
      * Determines the number of encoder ticks necessary for drivetrain to turn at certain angle
