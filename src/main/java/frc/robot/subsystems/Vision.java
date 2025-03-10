@@ -94,6 +94,18 @@ public class Vision extends SubsystemBase {
     return roll;
   }
 
+  public void makeParallel() {
+    if(isAprilTag()) {
+      double angle = getPitch();
+      double distToMove = Math.sin(Math.toRadians(angle)) * Constants.DriveTrainGearRatio;
+      if(angle > 0) {
+        Robotcontainer.drivetrain.setRightSideMotorsPosition(-distToMove);
+      } else {
+        Robotcontainer.drivetrain.setRightSideMotorsPosition(distToMove);
+      }
+    }
+  }
+
   /**
    * Auto aligns the robot to the left reef pole
    */
@@ -102,8 +114,9 @@ public class Vision extends SubsystemBase {
       double distToMove = Constants.leftAlignReef - (getX() / 39.37);
       double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
       RobotContainer.drivetrain.resetAllEncoders();
+      makeParallel();
       SmartDashboard.putNumber("rotations to move", rotations);
-      RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(Robotcontainer.drivetrain.getleftFrontEncoder() + rotations, Robotcontainer.drivetrain.getrightFrontEncoder() + rotations);
     }
   }
 
@@ -115,8 +128,9 @@ public class Vision extends SubsystemBase {
       double distToMove = Constants.rightAlignReef - (getX() / 39.37);
       double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
       RobotContainer.drivetrain.resetAllEncoders();
+      makeParallel();
       SmartDashboard.putNumber("rotations to move", rotations);
-      RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(Robotcontainer.drivetrain.getleftFrontEncoder() + rotations, Robotcontainer.drivetrain.getrightFrontEncoder() + rotations);
     }
   }
 
@@ -128,8 +142,9 @@ public class Vision extends SubsystemBase {
       double distToMove = Constants.reefCenter - (getX() / 39.37);
       double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
       RobotContainer.drivetrain.resetAllEncoders();
+      makeParallel();
       SmartDashboard.putNumber("rotations to move", rotations);
-      RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(Robotcontainer.drivetrain.getleftFrontEncoder() + rotations, Robotcontainer.drivetrain.getrightFrontEncoder() + rotations);
     }
   }
 
