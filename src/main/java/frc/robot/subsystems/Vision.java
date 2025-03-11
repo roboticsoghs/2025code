@@ -59,7 +59,7 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * 
+   *
    * @return Whether the Limelight detects an AprilTag
    */
   public boolean isApriltag() {
@@ -67,7 +67,7 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * 
+   *
    * @return The x offset of the AprilTag relative to the Limelight (in meters)
    */
   public double getX() {
@@ -75,7 +75,7 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * 
+   *
    * @return The z offset of the AprilTag relative to the Limelight (in meters)
    */
   public double getZ() {
@@ -118,7 +118,9 @@ public class Vision extends SubsystemBase {
       RobotContainer.drivetrain.resetAllEncoders();
       makeParallel();
       SmartDashboard.putNumber("rotations to move", rotations);
-      // RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getleftFrontEncoder() + rotations, RobotContainer.drivetrain.getRightFrontEncoder() + rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getleftFrontEncoder() + rotations, RobotContainer.drivetrain.getrightFrontEncoder() + rotations);
+      adjustElevatorHeight();
+      >>>>>>> main
     }
   }
 
@@ -146,7 +148,21 @@ public class Vision extends SubsystemBase {
       RobotContainer.drivetrain.resetAllEncoders();
       makeParallel();
       SmartDashboard.putNumber("rotations to move", rotations);
-      RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getleftFrontEncoder() + rotations, RobotContainer.drivetrain.getRightFrontEncoder() + rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(Robotcontainer.drivetrain.getleftFrontEncoder() + rotations, Robotcontainer.drivetrain.getrightFrontEncoder() + rotations);
+      adjustElevatorHeight();
+    }
+  }
+
+  /**
+   * Adjust elevator height based on distance from the reef
+   */
+  private void adjustElevatorHeight() {
+    if (z <= 0.05) {
+      // move down 1 rotation when within 5cm of the reef
+      RobotContainer.elevator.moveRotation(-1);
+    } else if (z > 0.10) {
+      // move up 1 rotation when further than 10cm from the reef
+      RobotContainer.elevator.moveRotation(1);
     }
   }
 
