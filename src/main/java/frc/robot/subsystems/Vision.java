@@ -95,15 +95,17 @@ public class Vision extends SubsystemBase {
   }
 
   public void makeParallel() {
-    if(isAprilTag()) {
-      double angle = getPitch();
-      double distToMove = Math.sin(Math.toRadians(angle)) * Constants.DriveTrainGearRatio;
-      if(angle > 0) {
-        Robotcontainer.drivetrain.setRightSideMotorsPosition(-distToMove);
-      } else {
-        Robotcontainer.drivetrain.setRightSideMotorsPosition(distToMove);
-      }
+    double angle = getYaw();
+    double distToMove = Math.sin(Math.toRadians(angle)) * (Constants.DriveTrainGearRatio);
+    SmartDashboard.putNumber("rotations to rotate", distToMove);
+    if(angle < 0 && Math.abs(distToMove) > 1.0) {
+      distToMove *= 0.7;
     }
+    if(angle > 0 && Math.abs(distToMove) > 1.0) {
+      distToMove *= 0.85;
+    }
+    RobotContainer.drivetrain.setRightSideMotorsPosition(-distToMove);
+    RobotContainer.drivetrain.setLeftSideMotorsPosition(distToMove);
   }
 
   /**
@@ -116,7 +118,7 @@ public class Vision extends SubsystemBase {
       RobotContainer.drivetrain.resetAllEncoders();
       makeParallel();
       SmartDashboard.putNumber("rotations to move", rotations);
-      RobotContainer.drivetrain.setAllMotorsPosition(Robotcontainer.drivetrain.getleftFrontEncoder() + rotations, Robotcontainer.drivetrain.getrightFrontEncoder() + rotations);
+      // RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getleftFrontEncoder() + rotations, RobotContainer.drivetrain.getRightFrontEncoder() + rotations);
     }
   }
 
@@ -130,7 +132,7 @@ public class Vision extends SubsystemBase {
       RobotContainer.drivetrain.resetAllEncoders();
       makeParallel();
       SmartDashboard.putNumber("rotations to move", rotations);
-      RobotContainer.drivetrain.setAllMotorsPosition(Robotcontainer.drivetrain.getleftFrontEncoder() + rotations, Robotcontainer.drivetrain.getrightFrontEncoder() + rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getleftFrontEncoder() + rotations, RobotContainer.drivetrain.getRightFrontEncoder() + rotations);
     }
   }
 
@@ -144,7 +146,7 @@ public class Vision extends SubsystemBase {
       RobotContainer.drivetrain.resetAllEncoders();
       makeParallel();
       SmartDashboard.putNumber("rotations to move", rotations);
-      RobotContainer.drivetrain.setAllMotorsPosition(Robotcontainer.drivetrain.getleftFrontEncoder() + rotations, Robotcontainer.drivetrain.getrightFrontEncoder() + rotations);
+      RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getleftFrontEncoder() + rotations, RobotContainer.drivetrain.getRightFrontEncoder() + rotations);
     }
   }
 
