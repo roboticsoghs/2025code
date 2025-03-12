@@ -20,6 +20,7 @@ public class JoystickCommand extends Command {
   private boolean slowModeMultiplier = false;
   private boolean finished = false;
   private boolean ignoreOp;
+  private boolean ignoreDrive;
   private double throttleValue;
   // private final POVButton dpadRight = new POVButton(driveStick, 90);
   // private final POVButton dpadDown = new POVButton(RobotContainer.driveStick, 180);
@@ -36,6 +37,7 @@ public class JoystickCommand extends Command {
     throttleValue = 0;
     ignoreOp = false;
     slowModeMultiplier = false;
+    ignoreDrive = false;
     // addRequirements(RobotContainer.elevator);
   }
 
@@ -59,31 +61,37 @@ public class JoystickCommand extends Command {
       SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
     }
     if(RobotContainer.centerAlignButton.getAsBoolean()) {
-      RobotContainer.visionSystem.alignCenterSide();
+      ignoreDrive = true;
+      RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
       try {
-        Thread.sleep(3000);
+        Thread.sleep(1000);
       } catch(InterruptedException e) {
           e.printStackTrace();
       }
-      triggerPressed(0.7);
+      // triggerPressed(0.5);
+      ignoreDrive = false;
     }
     if(RobotContainer.leftAlignButton.getAsBoolean()) {
-      RobotContainer.visionSystem.alignLeftSide();
+      ignoreDrive = true;
+      RobotContainer.visionSystem.alignToReef(Constants.leftAlignReef);
       try {
-        Thread.sleep(3000);
+        Thread.sleep(1000);
       } catch(InterruptedException e) {
           e.printStackTrace();
       }
-      triggerPressed(0.7);
+      // triggerPressed(0.5);
+      ignoreDrive = false;
     }
     if(RobotContainer.rightAlignButton.getAsBoolean()) {
-      RobotContainer.visionSystem.alignRightSide();
+      ignoreDrive = true;
+      RobotContainer.visionSystem.alignToReef(Constants.rightAlignReef);
       try {
-        Thread.sleep(3000);
+        Thread.sleep(1000);
       } catch(InterruptedException e) {
           e.printStackTrace();
       }
-      triggerPressed(0.7);
+      // triggerPressed(0.5);
+      ignoreDrive = false;
     }
 
     if(RobotContainer.m_operator.isConnected()){
@@ -209,10 +217,12 @@ public class JoystickCommand extends Command {
 
     // RobotContainer.drivetrain.setRightSideMotorSpeed(rightSpeed);
     // RobotContainer.drivetrain.arcadeDrive(leftSpeed, rightSpeed);
-    if(slowModeMultiplier) {
-      RobotContainer.drivetrain.setAllMotorsSpeed(0.2 * leftDriveTrainSpeed, 0.2 * rightDriveTrainSpeed);
-    } else {
-      RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
+    if(!ignoreDrive) {
+      if(slowModeMultiplier) {
+      RobotContainer.drivetrain.setAllMotorsSpeed(0.2* leftDriveTrainSpeed, 0.2 * rightDriveTrainSpeed);
+      } else {
+        RobotContainer.drivetrain.setAllMotorsSpeed(leftDriveTrainSpeed, rightDriveTrainSpeed);
+      }
     }
 }
 

@@ -81,7 +81,7 @@ public class DriveTrain extends SubsystemBase {
     private double encoderVal = 0;
     // private final int SmartMotionID = 0; // unused
     // private int MaxMotionID = 1; // unused
-    private final int maxVel = 4540;
+    private final int maxVel = 8000; // old value was 4540
 
     public final double allowedError = 0.05;
 
