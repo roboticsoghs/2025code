@@ -106,7 +106,7 @@ public class Vision extends SubsystemBase {
     RobotContainer.drivetrain.setRightSideMotorsPosition(-distToMove);
     RobotContainer.drivetrain.setLeftSideMotorsPosition(distToMove);
     try {
-      Thread.sleep(1000);
+      Thread.sleep(750);
     } catch(InterruptedException e) {
         e.printStackTrace();
     }
@@ -122,7 +122,7 @@ public class Vision extends SubsystemBase {
       double zVal = getZ();
       double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
       RobotContainer.drivetrain.resetAllEncoders();
-      if(Math.abs(yawVal) > 5) {
+      if(Math.abs(yawVal) > 3) {
         makeParallel(yawVal);
       }
       SmartDashboard.putNumber("rotations to move", rotations);

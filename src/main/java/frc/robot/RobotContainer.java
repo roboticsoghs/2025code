@@ -40,7 +40,7 @@ public class RobotContainer {
   public static final Vision visionSystem = new Vision();
 
   // operator board buttons
-  public static JoystickButton slowmodeButton = new JoystickButton(m_operator, Constants.SLOWMODE_PORT);
+  public static JoystickButton shooterButton = new JoystickButton(m_operator, Constants.SLOWMODE_PORT);
   public static JoystickButton leftAlignButton = new JoystickButton(m_operator, Constants.LEFT_ALIGN_PORT);
   public static JoystickButton rightAlignButton = new JoystickButton(m_operator, Constants.RIGHT_ALIGN_PORT);
   public static JoystickButton centerAlignButton = new JoystickButton(m_operator, Constants.CENTER_ALIGN_PORT);

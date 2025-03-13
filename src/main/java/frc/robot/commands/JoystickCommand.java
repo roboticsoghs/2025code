@@ -64,7 +64,7 @@ public class JoystickCommand extends Command {
       ignoreDrive = true;
       RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
       try {
-        Thread.sleep(1000);
+        Thread.sleep(750);
       } catch(InterruptedException e) {
           e.printStackTrace();
       }
@@ -75,7 +75,7 @@ public class JoystickCommand extends Command {
       ignoreDrive = true;
       RobotContainer.visionSystem.alignToReef(Constants.leftAlignReef);
       try {
-        Thread.sleep(1000);
+        Thread.sleep(750);
       } catch(InterruptedException e) {
           e.printStackTrace();
       }
@@ -86,7 +86,7 @@ public class JoystickCommand extends Command {
       ignoreDrive = true;
       RobotContainer.visionSystem.alignToReef(Constants.rightAlignReef);
       try {
-        Thread.sleep(1000);
+        Thread.sleep(750);
       } catch(InterruptedException e) {
           e.printStackTrace();
       }
@@ -137,6 +137,10 @@ public class JoystickCommand extends Command {
       SmartDashboard.putBoolean("Right click", false);
       triggerPressed(0);
     }
+    // if (!RobotContainer.shooterButton.getAsBoolean()) {
+    //   SmartDashboard.putBoolean("Right click", false);
+    //   triggerPressed(0);
+    // }
     SmartDashboard.putNumber("click", RobotContainer.driveStick.getRightTriggerAxis());
     // // Check if the right trigger is pressed beyond a threshold (e.g., 0.5)
     if (RobotContainer.driveStick.getLeftTriggerAxis() > 0.5) {
@@ -145,8 +149,12 @@ public class JoystickCommand extends Command {
     }
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
       SmartDashboard.putBoolean("Right click", true);
-      handleRightTriggerPressed(0.7);
+      handleRightTriggerPressed(0.5);
     }
+    // if (RobotContainer.shooterButton.getAsBoolean()) {
+    //   SmartDashboard.putBoolean("Right click", true);
+    //   handleRightTriggerPressed(0.5);
+    // }
 
 
     if (RobotContainer.driveStick.getLeftBumperButton()) {
@@ -229,7 +237,7 @@ public class JoystickCommand extends Command {
   private void handleRightTriggerPressed(double speed) {
     RobotContainer.shooter.shoot_that_fucker(speed);
     try {
-      Thread.sleep(500);
+      Thread.sleep(250);
     } catch(InterruptedException e) {
       e.printStackTrace();
     }
