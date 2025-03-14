@@ -39,7 +39,7 @@ public class JoystickCommand extends Command {
     ignoreOp = false;
     slowModeMultiplier = false;
     ignoreDrive = false;
-    centerMultiplier = 1;
+    centerMultiplier = 0.4;
     // addRequirements(RobotContainer.elevator);
   }
 

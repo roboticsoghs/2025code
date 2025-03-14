@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
 
@@ -26,7 +27,7 @@ public class AutoCommand extends Command {
         SmartDashboard.putNumber("auto pos: ", position);
         SmartDashboard.putBoolean("auto finished", finished);
 
-        if (RobotContainer.visionSystem.isApriltag()) {
+        if (RobotContainer.visionSystem.isApriltag() && (RobotContainer.visionSystem.getId() == 6 || RobotContainer.visionSystem.getId() == 19)) {
             detectedTag = true;
             RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
             

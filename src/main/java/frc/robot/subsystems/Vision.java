@@ -19,6 +19,7 @@ public class Vision extends SubsystemBase {
   private double pitch;
   private double yaw;
   private double roll;
+  private long aprilTagId;
   private double[] camera = new double[6];
 
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -26,6 +27,7 @@ public class Vision extends SubsystemBase {
 
   public Vision() {
     System.out.println("We are cooked!");
+    aprilTagId = 0;
   }
 
   @Override
@@ -34,6 +36,8 @@ public class Vision extends SubsystemBase {
     //read values periodically
     double[] defaultValue = {0,0,0,0,0,0}; // default value required by getDoubleArray
     camera = cameraPose.getDoubleArray(defaultValue);
+    long defaultValueID = 0;
+    aprilTagId = table.getEntry("tid").getInteger(defaultValueID);
 
     // limelight 3D offsets relative to camera
     x = camera[0];
@@ -53,7 +57,8 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("Limelight Pitch", pitch);
     SmartDashboard.putNumber("Limelight Yaw", yaw);
     SmartDashboard.putNumber("Limelight Roll", roll);
-
+    
+    SmartDashboard.putNumber("AprilTag ID", aprilTagId);
     // output if the limelight sees an AprilTag
     SmartDashboard.putBoolean("AprilTag Seen", isApriltag());
   }
@@ -92,6 +97,10 @@ public class Vision extends SubsystemBase {
 
   public double getRoll() {
     return roll;
+  }
+
+  public double getId() {
+    return aprilTagId;
   }
 
   public void makeParallel(double angle) {
