@@ -27,7 +27,7 @@ public class AutoCommand extends Command {
         SmartDashboard.putNumber("auto pos: ", position);
         SmartDashboard.putBoolean("auto finished", finished);
 
-        if (RobotContainer.visionSystem.isApriltag() && (RobotContainer.visionSystem.getId() == 6 || RobotContainer.visionSystem.getId() == 19)) {
+        if (RobotContainer.visionSystem.isApriltag() && (RobotContainer.visionSystem.getId() == 6 || RobotContainer.visionSystem.getId() == 19 || RobotContainer.visionSystem.getId() == 17 || RobotContainer.visionSystem.getId() == 8)) {
             detectedTag = true;
             RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
             
@@ -37,7 +37,7 @@ public class AutoCommand extends Command {
             } catch(InterruptedException e) {
                 e.printStackTrace();
             }
-            RobotContainer.shooter.shoot_that_fucker(0.2);
+            RobotContainer.shooter.shoot_that_fucker(0.15);
             // try {
             //     Thread.sleep(300);
             // } catch(InterruptedException e) {
@@ -52,8 +52,7 @@ public class AutoCommand extends Command {
 
             if (!detectedTag) {
                 // Keep driving forward until it sees a tag
-                RobotContainer.drivetrain.setAllMotorsPosition(position - 1, position - 1);
-                position--;
+                back();
             }
         }
     }
@@ -66,5 +65,15 @@ public class AutoCommand extends Command {
     @Override
     public boolean isFinished() {
         return finished;
+    }
+
+    public void forward() {
+        RobotContainer.drivetrain.setAllMotorsPosition(position + 1, position + 1);
+        position++;
+    }
+
+    public void back() {
+        RobotContainer.drivetrain.setAllMotorsPosition(position - 1, position - 1);
+        position--;
     }
 }
