@@ -55,7 +55,7 @@ public final class Constants {
     // inches
     public static double leftAlignReef = -4.14; // prev: -5.84
     public static double reefCenter = -11.2; // prev: -2.5
-    public static double rightAlignReef = -17; // prev: -16
+    public static double rightAlignReef = -13; // prev: -16
 
     /**
      * Determines the number of encoder ticks necessary for drivetrain to turn at certain angle

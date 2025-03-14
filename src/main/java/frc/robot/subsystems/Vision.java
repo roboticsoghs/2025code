@@ -174,10 +174,13 @@ public class Vision extends SubsystemBase {
    * Adjust elevator height based on distance from the reef
    */
   private void adjustElevatorHeight(double zVal) {
-    if (zVal <= 0.05) {
+    if (zVal <= 0.14) {
       // move down 1 rotation when within 5cm of the reef
       RobotContainer.elevator.moveRotation(-1);
-    } else if (zVal > 0.10) {
+    } else if (zVal > 0.30) {
+      // move up 1 rotation when further than 10cm from the reef
+      RobotContainer.elevator.moveRotation(4);
+    } else if (zVal > 0.20) {
       // move up 1 rotation when further than 10cm from the reef
       RobotContainer.elevator.moveRotation(1);
     }
