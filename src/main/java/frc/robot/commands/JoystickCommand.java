@@ -22,6 +22,7 @@ public class JoystickCommand extends Command {
   private boolean ignoreOp;
   private boolean ignoreDrive;
   private double throttleValue;
+  private double centerMultiplier;
   // private final POVButton dpadRight = new POVButton(driveStick, 90);
   // private final POVButton dpadDown = new POVButton(RobotContainer.driveStick, 180);
   // private final POVButton dpadLeft = new POVButton(driveStick, 270);
@@ -38,6 +39,7 @@ public class JoystickCommand extends Command {
     ignoreOp = false;
     slowModeMultiplier = false;
     ignoreDrive = false;
+    centerMultiplier = 1;
     // addRequirements(RobotContainer.elevator);
   }
 
@@ -68,7 +70,8 @@ public class JoystickCommand extends Command {
       } catch(InterruptedException e) {
           e.printStackTrace();
       }
-      // triggerPressed(0.5);
+      centerMultiplier = 0.4;
+      // triggerPressed(0.4);
       ignoreDrive = false;
     }
     if(RobotContainer.leftAlignButton.getAsBoolean()) {
@@ -79,7 +82,7 @@ public class JoystickCommand extends Command {
       } catch(InterruptedException e) {
           e.printStackTrace();
       }
-      // triggerPressed(0.5);
+      // triggerPressed(0.4);
       ignoreDrive = false;
     }
     if(RobotContainer.rightAlignButton.getAsBoolean()) {
@@ -149,7 +152,7 @@ public class JoystickCommand extends Command {
     }
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
       SmartDashboard.putBoolean("Right click", true);
-      handleRightTriggerPressed(0.5);
+      handleRightTriggerPressed(0.5 * centerMultiplier);
     }
     // if (RobotContainer.shooterButton.getAsBoolean()) {
     //   SmartDashboard.putBoolean("Right click", true);
@@ -242,6 +245,7 @@ public class JoystickCommand extends Command {
       e.printStackTrace();
     }
     ignoreOp = false;
+    centerMultiplier = 1;
   }
 
   private void triggerPressed(double speed) {
