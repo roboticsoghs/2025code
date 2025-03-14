@@ -27,28 +27,16 @@ public class AutoCommand extends Command {
         SmartDashboard.putBoolean("auto finished", finished);
 
         if (RobotContainer.visionSystem.isApriltag()) {
-            SmartDashboard.putBoolean("AprilTag Seen", true);
             detectedTag = true;
-
-            // Get offsets
-            double offSetX = RobotContainer.visionSystem.getX();
-            double offSetZ = RobotContainer.visionSystem.getZ();
-
-            double distToMove = Constants.rightAlignReef - (offSetX * 39.37);
-            double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
-
-            SmartDashboard.putNumber("amount to move: ", rotations);
-
-            RobotContainer.drivetrain.stopMotor();
-            RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getEncoderVal() + rotations, RobotContainer.drivetrain.getEncoderVal() + rotations);
-
-            // RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
-            // try {
-            //     Thread.sleep(600);
-            // } catch(InterruptedException e) {
-            //     e.printStackTrace();
-            // }
-            // RobotContainer.shooter.shoot_that_fucker(0.5);
+            RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
+            
+            RobotContainer.elevator.setPosition(ElevatorPosition.LEVEL_0);
+            try {
+                Thread.sleep(500);
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+            RobotContainer.shooter.shoot_that_fucker(0.2);
             // try {
             //     Thread.sleep(300);
             // } catch(InterruptedException e) {
