@@ -62,6 +62,19 @@ public class JoystickCommand extends Command {
     } else {
       SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
     }
+    if(RobotContainer.unstuckCoralButton.getAsBoolean()) {
+      ignoreDrive = true;
+      if(RobotContainer.visionSystem.isAprilTag()) {
+        double yaw = RobotContainer.visionSystem.getYaw();
+        RobotContainer.visionSystem.makeParallel(yaw);
+      }
+      try {
+        Thread.sleep(750);
+      } catch(InterruptedException e) {
+          e.printStackTrace();
+      }
+      ignoreDrive = false;
+    }
     if(RobotContainer.centerAlignButton.getAsBoolean()) {
       ignoreDrive = true;
       ignoreOp = true;
