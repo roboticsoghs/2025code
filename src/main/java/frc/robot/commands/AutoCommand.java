@@ -37,7 +37,7 @@ public class AutoCommand extends Command {
             } catch(InterruptedException e) {
                 e.printStackTrace();
             }
-            RobotContainer.shooter.shoot_that_fucker(0.15);
+            RobotContainer.shooter.shoot_that_fucker(0.3);
             // try {
             //     Thread.sleep(300);
             // } catch(InterruptedException e) {
