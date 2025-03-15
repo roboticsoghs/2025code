@@ -129,11 +129,9 @@ public class Vision extends SubsystemBase {
       double distToMove = offsetHeight - (getX() / 39.37);
       double yawVal = getYaw();
       double zVal = getZ();
-      double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
       RobotContainer.drivetrain.resetAllEncoders();
-      if(Math.abs(yawVal) > 3) {
-        makeParallel(yawVal);
-      }
+      
+      double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
       SmartDashboard.putNumber("rotations to move", rotations);
       RobotContainer.drivetrain.resetAllEncoders();
       RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
