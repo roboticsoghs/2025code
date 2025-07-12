@@ -108,7 +108,7 @@ public class Vision extends SubsystemBase {
     if (Math.abs(angleDegrees) < 2.0) return; // ignore small angles
 
     final double rotationsPerDegree = 0.05; // adjust value as needed
-    double baseRotations = angle * rotatonsPerDegree;
+    double baseRotations = angleDegrees * rotationsPerDegree;
 
     // clamp wheel rotations between -4 and 4
     baseRotations = Math.max(-4.0, Math.min(4.0, baseRotations));
@@ -120,7 +120,7 @@ public class Vision extends SubsystemBase {
       baseRotations *= 0.9;
     }
 
-    double leftRotatoins = baseRotations;
+    double leftRotations = baseRotations;
     double rightRotations = -baseRotations;
 
     RobotContainer.drivetrain.resetAllEncoders();
@@ -153,16 +153,16 @@ public class Vision extends SubsystemBase {
     double cameraYaw = getYaw();
     double z = getZ();
 
-    makeParallel(); // doesn't make parallel when under 2 degrees error
+    makeParallel(cameraYaw); // doesn't make parallel when under 2 degrees error
 
     double xOffset = getX() / 39.37; // convert x offset from meters to inches
     double distanceToMove = offset - xOffset;
-    double rotations = RobotContainer.drivetrain.linearToRotations(distanceToMove);
+    double rotations = RobotContainer.drivetrain.lineartoRotations(distanceToMove);
 
     RobotContainer.drivetrain.resetAllEncoders();
     RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
 
-    adjustElevatorHeight(zVal);
+    adjustElevatorHeight(z);
 
     // if(isApriltag()) {
     //   // first make the robot parallel to the reef
@@ -216,13 +216,13 @@ public class Vision extends SubsystemBase {
    * zVal is the distance to the detected AprilTag in meters
    */
   private void adjustElevatorHeight(double zVal) {
-    const double idealDist = 0.10; // in meters
-    const double deadzone = 0.02;
-    const double maxError = 0.2;
-    const double maxRotations = 4; // max of 4 rotations of adjustment
+    final double idealDist = 0.10; // in meters
+    final double deadzone = 0.02;
+    final double maxError = 0.2;
+    final double maxRotations = 4; // max of 4 rotations of adjustment
     
     double error = zVal - idealDist; // calculate driver error
-    if (Math.abs(error) < deadzone) return // no adjustment needed
+    if (Math.abs(error) < deadzone) return; // no adjustment needed
     
     double normalizedError = Math.max(-1.0, Math.min(1.0, error / maxError));
     double rotationAmount = normalizedError * maxRotations;
