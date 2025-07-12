@@ -74,6 +74,7 @@ public class JoystickCommand extends Command {
       centerMultiplier = 0.4;
       // triggerPressed(0.4);
       ignoreDrive = false;
+      ignoreOp = false;
     }
     if(RobotContainer.leftAlignButton.getAsBoolean()) {
       ignoreDrive = true;
@@ -86,6 +87,7 @@ public class JoystickCommand extends Command {
       }
       // triggerPressed(0.4);
       ignoreDrive = false;
+      ignoreOp = false;
     }
     if(RobotContainer.rightAlignButton.getAsBoolean()) {
       ignoreDrive = true;
@@ -98,6 +100,7 @@ public class JoystickCommand extends Command {
       }
       // triggerPressed(0.5);
       ignoreDrive = false;
+      ignoreOp = false;
     }
 
     if(RobotContainer.m_operator.isConnected()){
@@ -109,7 +112,7 @@ public class JoystickCommand extends Command {
       // RobotContainer.shooter.shoot_that_fucker(0); // TODO: get value
     }
     if (!ignoreOp) {
-      if(throttleValue == -1){
+      if(throttleValue <= -0.9){
         // rest
         // shoots coral at bottom of reef (L0)
         RobotContainer.elevator.setPosition(ElevatorPosition.RESTING_POSITION);
@@ -155,7 +158,7 @@ public class JoystickCommand extends Command {
     }
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
       SmartDashboard.putBoolean("Right click", true);
-      handleRightTriggerPressed(0.3 * centerMultiplier);
+      handleRightTriggerPressed(0.25 * centerMultiplier); // 25% speed
     }
     // if (RobotContainer.shooterButton.getAsBoolean()) {
     //   SmartDashboard.putBoolean("Right click", true);
@@ -252,7 +255,7 @@ public class JoystickCommand extends Command {
   }
 
   private void triggerPressed(double speed) {
-    RobotContainer.shooter.move(speed);
+    RobotContainer.shooter.reverse(speed);
   }
 
   private void intakeStart() {

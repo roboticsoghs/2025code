@@ -42,17 +42,22 @@ public final class Constants {
     public static int CENTER_ALIGN_PORT = 1;
     public static int UNSTUCK_CORAL_PORT = 2;
 
-    // general
+    // elevator
     public static double ElevatorgearRatio = 12; 
     public static double ElevatorwheelRadius = 0.875;
+
+    // drive train
     public static double DriveTrainGearRatio = 8.714;
     public static double DriveTrainWheelRadius = 3;
+    
     public static int encoderTicksPerRotation = 42;
+
     public static double offSetHeight = 3.5;
     public static boolean slowMode = false;
     public static double slowModeMultipler = 0.3;
 
     // inches
+    // TODO: adjust constants
     public static double leftAlignReef = -4.14; // prev: -5.84
     public static double reefCenter = -11.2; // prev: -2.5
     public static double rightAlignReef = -13; // prev: -16

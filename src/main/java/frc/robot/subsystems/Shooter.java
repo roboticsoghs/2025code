@@ -94,7 +94,6 @@ public class Shooter extends SubsystemBase {
 
     private void configurePIDControllers() {
         // Apply PID constants to the PID controllers
-        // left motor
         config.closedLoop.feedbackSensor(FeedbackSensor.kPrimaryEncoder);
         config.closedLoop.pid(SmartVelocityP, SmartVelocityI, SmartVelocityD);
         config.closedLoop.maxMotion.maxAcceleration(maxAccel);
@@ -115,63 +114,35 @@ public class Shooter extends SubsystemBase {
     }
 
     public void shoot_that_fucker(double speed) { 
-        // if(isLoaded) {
-            
-        //     double x_dist = getreefDistance();
-        //     // Shoot coral at 20% speed
-        //     double radianConstant = Math.toRadians(35);
-        //     double t = (-1) * x_dist / Math.sin(radianConstant);
-        //     double y_diff = Math.tan(radianConstant) * x_dist - 4.9 * Math.pow(t, 2);
-        //     double yInch = y_diff * 39.37;
-
-        //     PID.setReference(speed, ControlType.kDutyCycle);
-        //     isLoaded = false;
-        // }
         PID.setReference(speed, ControlType.kDutyCycle);
-        // try {
-        //     Thread.sleep(2000);
-        //   } catch(InterruptedException e) {
-        //       e.printStackTrace();
-        //   }
+        isLoaded = false;
+        intakingLoad = false;
     }
 
     @Override
     public void periodic() {
-        if(getLimitSwitch()) {
-            isLoaded = true;
-            if (firstTime) {    
-                PID.setReference(0.1, ControlType.kDutyCycle);
+        if (intakingLoad && !isLoaded) {
+            PID.setReference(0.1, ControlType.kDutyCycle);
+            if (getLimitSwitch()) {
                 try {
                     Thread.sleep(150);
                 } catch(InterruptedException e) {
                     e.printStackTrace();
                 }
-                PID.setReference(0, ControlType.kDutyCycle);
+                SmartDashboard.putBoolean("Intake complete", true);
+                isLoaded = true;
+            } else {
+                SmartDashboard.putBoolean("Intake complete", false);
             }
-            SmartDashboard.putBoolean("Intake complete", true);
-            firstTime = false;
-        } else {
-            SmartDashboard.putBoolean("Intake complete", false);
-            isLoaded = false;
-        }
-        if(intakingLoad && isLoaded == false) {
-            PID.setReference(0.1, ControlType.kDutyCycle);
-            firstTime = true;
-        } else {
-            intakingLoad = false;
         }
         SmartDashboard.putBoolean("coral outtake: ", isLoaded);
-        SmartDashboard.putNumber("distance sensor: ", getreefDistance());
+        SmartDashboard.putBoolean("intaking", intakingLoad);
     }
 
-    private double getreefDistance() {
-        // in cm
-        // return ((counter.getPeriod() - 0.001) *1E+5 * 3.61) + 2;
-        return 0;
-    }
-
-    public void move(double speed) {
+    public void reverse(double speed) {
         PID.setReference(speed, ControlType.kDutyCycle);
+        // intakingLoad = false;
+        // isLoaded = false;
     }
 
     public void intakeStart() {
@@ -179,5 +150,6 @@ public class Shooter extends SubsystemBase {
     }
     public void intakeStop() {
         intakingLoad = false;
+        isLoaded = false;
     }
 }
