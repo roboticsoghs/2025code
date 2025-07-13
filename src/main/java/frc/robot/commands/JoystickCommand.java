@@ -73,8 +73,8 @@ public class JoystickCommand extends Command {
       }
       centerMultiplier = 0.4;
       // triggerPressed(0.4);
-      ignoreDrive = false;
-      ignoreOp = false;
+      // ignoreDrive = false;
+      // ignoreOp = false;
     }
     if(RobotContainer.leftAlignButton.getAsBoolean()) {
       ignoreDrive = true;
@@ -87,7 +87,7 @@ public class JoystickCommand extends Command {
       }
       // triggerPressed(0.4);
       ignoreDrive = false;
-      ignoreOp = false;
+      // ignoreOp = false;
     }
     if(RobotContainer.rightAlignButton.getAsBoolean()) {
       ignoreDrive = true;
@@ -100,7 +100,7 @@ public class JoystickCommand extends Command {
       }
       // triggerPressed(0.5);
       ignoreDrive = false;
-      ignoreOp = false;
+      // ignoreOp = false;
     }
 
     if(RobotContainer.m_operator.isConnected()){
@@ -158,7 +158,9 @@ public class JoystickCommand extends Command {
     }
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
       SmartDashboard.putBoolean("Right click", true);
-      handleRightTriggerPressed(0.25 * centerMultiplier); // 25% speed
+      handleRightTriggerPressed(0.4 * centerMultiplier); // 25% speed
+      ignoreOp = false;
+      ignoreDrive = false;
     }
     // if (RobotContainer.shooterButton.getAsBoolean()) {
     //   SmartDashboard.putBoolean("Right click", true);

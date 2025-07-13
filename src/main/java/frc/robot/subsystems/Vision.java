@@ -105,81 +105,81 @@ public class Vision extends SubsystemBase {
 
   // align robot to reef (angle is in degrees)
   public void makeParallel(double angleDegrees) {
-    if (Math.abs(angleDegrees) < 2.0) return; // ignore small angles
+    // if (Math.abs(angleDegrees) < 3.0) return; // ignore small angles
 
-    final double rotationsPerDegree = 0.05; // adjust value as needed
-    double baseRotations = angleDegrees * rotationsPerDegree;
+    // final double rotationsPerDegree = 0.05; // adjust value as needed
+    // double baseRotations = angleDegrees * rotationsPerDegree;
 
-    // clamp wheel rotations between -4 and 4
-    baseRotations = Math.max(-4.0, Math.min(4.0, baseRotations));
+    // // clamp wheel rotations between -8 and 8
+    // baseRotations = Math.max(-8.0, Math.min(8.0, baseRotations));
 
-    // EXPIRAMENTAL
-    if (Math.abs(angleDegrees) > 15.0) {
-      baseRotations *= 0.85;
-    } else if (Math.abs(angleDegrees) > 5.0) {
-      baseRotations *= 0.9;
+    // // EXPIRAMENTAL
+    // if (Math.abs(angleDegrees) > 10.0) {
+    //   baseRotations *= 0.85;
+    // } else if (Math.abs(angleDegrees) > 5.0) {
+    //   baseRotations *= 0.9;
+    // }
+
+    // double leftRotations = baseRotations;
+    // double rightRotations = baseRotations;
+
+    // RobotContainer.drivetrain.resetAllEncoders();
+    // RobotContainer.drivetrain.setAllMotorsPosition(leftRotations, rightRotations);
+
+    double distToMove = Math.sin(Math.toRadians(angleDegrees)) * (Constants.DriveTrainGearRatio);
+    SmartDashboard.putNumber("rotations to rotate", distToMove);
+    if(angleDegrees < 0 && Math.abs(distToMove) > 1.0) {
+      distToMove *= 0.7;
+    }else
+    if(angleDegrees > 0 && Math.abs(distToMove) > 1.0) {
+      distToMove *= 0.85;
     }
 
-    double leftRotations = baseRotations;
-    double rightRotations = -baseRotations;
-
-    RobotContainer.drivetrain.resetAllEncoders();
-    RobotContainer.drivetrain.setAllMotorsPosition(leftRotations, rightRotations);
-
-    // double distToMove = Math.sin(Math.toRadians(angle)) * (Constants.DriveTrainGearRatio);
-    // SmartDashboard.putNumber("rotations to rotate", distToMove);
-    // if(angle < 0 && Math.abs(distToMove) > 1.0) {
-    //   distToMove *= 0.7;
-    // }
-    // if(angle > 0 && Math.abs(distToMove) > 1.0) {
-    //   distToMove *= 0.85;
-    // }
-
-    // RobotContainer.drivetrain.setRightSideMotorsPosition(-distToMove);
-    // RobotContainer.drivetrain.setLeftSideMotorsPosition(distToMove);
-    // try {
-    //   Thread.sleep(750);
-    // } catch(InterruptedException e) {
-    //     e.printStackTrace();
-    // }
+    RobotContainer.drivetrain.setRightSideMotorsPosition(-distToMove);
+    RobotContainer.drivetrain.setLeftSideMotorsPosition(distToMove);
+    try {
+      Thread.sleep(750);
+    } catch(InterruptedException e) {
+        e.printStackTrace();
+    }
   }
 
   /**
    * Auto aligns the robot to the left reef pole
    */
   public void alignToReef(double offset) {
-    if (!isApriltag()) return; // AprilTag not found yet
+    // if (!isApriltag()) return; // AprilTag not found yet
 
-    double cameraYaw = getYaw();
-    double z = getZ();
+    // double cameraYaw = getYaw();
+    // double z = getZ();
 
-    makeParallel(cameraYaw); // doesn't make parallel when under 2 degrees error
+    // makeParallel(cameraYaw); // doesn't make parallel when under 2 degrees error
 
-    double xOffset = getX() / 39.37; // convert x offset from meters to inches
-    double distanceToMove = offset - xOffset;
-    double rotations = RobotContainer.drivetrain.lineartoRotations(distanceToMove);
+    // double xOffset = getX() / 39.37; // convert x offset from meters to inches
+    // double distanceToMove = offset - xOffset;
+    // double rotations = Math.abs(RobotContainer.drivetrain.lineartoRotations(distanceToMove));
 
-    RobotContainer.drivetrain.resetAllEncoders();
-    RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+    // RobotContainer.drivetrain.resetAllEncoders();
+    // RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
 
-    adjustElevatorHeight(z);
+    // adjustElevatorHeight(z);
 
-    // if(isApriltag()) {
-    //   // first make the robot parallel to the reef
-    //   double yawVal = getYaw();
-    //   if(Math.abs(yawVal) > 3) {
-    //     makeParallel(yawVal);
-    //   }
-    //   // calculate distance needed to line up with reef
-    //   double distToMove = offsetHeight - (getX() / 39.37);
-    //   double zVal = getZ();
-    //   double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
-    //   RobotContainer.drivetrain.resetAllEncoders();
-    //   SmartDashboard.putNumber("rotations to move", rotations);
-    //   RobotContainer.drivetrain.resetAllEncoders();
-    //   RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
-    //   adjustElevatorHeight(zVal);
-    // }
+    if(isApriltag()) {
+      // first make the robot parallel to the reef
+      double yawVal = getYaw();
+      if(Math.abs(yawVal) > 3) {
+        makeParallel(yawVal);
+      }
+      // calculate distance needed to line up with reef
+      double distToMove = offset - (getX() / 39.37);
+      double zVal = getZ();
+      double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
+      RobotContainer.drivetrain.resetAllEncoders();
+      SmartDashboard.putNumber("rotations to move", rotations);
+      RobotContainer.drivetrain.resetAllEncoders();
+      RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+      adjustElevatorHeight(zVal);
+    }
   }
 
   /**
@@ -219,7 +219,7 @@ public class Vision extends SubsystemBase {
     final double idealDist = 0.10; // in meters
     final double deadzone = 0.02;
     final double maxError = 0.2;
-    final double maxRotations = 4; // max of 4 rotations of adjustment
+    final double maxRotations = 6; // max of 4 rotations of adjustment
     
     double error = zVal - idealDist; // calculate driver error
     if (Math.abs(error) < deadzone) return; // no adjustment needed
