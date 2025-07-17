@@ -43,13 +43,13 @@ public final class Constants {
     public static int UNSTUCK_CORAL_PORT = 2;
 
     // elevator
-    public static double ElevatorgearRatio = 12; 
+    public static double ElevatorgearRatio = 12;
     public static double ElevatorwheelRadius = 0.875;
 
     // drive train
     public static double DriveTrainGearRatio = 8.714;
-    public static double DriveTrainWheelRadius = 3;
-    
+    public static double DriveTrainWheelRadius = 3; // inches
+
     public static int encoderTicksPerRotation = 42;
 
     public static double offSetHeight = 3.5;
@@ -61,16 +61,6 @@ public final class Constants {
     public static double leftAlignReef = -5.14; // prev: -5.84
     public static double reefCenter = -11.2; // prev: -2.5
     public static double rightAlignReef = -15; // prev: -16
-
-    /**
-     * Determines the number of encoder ticks necessary for drivetrain to turn at certain angle
-     * @param angle the angle to turn
-     * @return number of encoder ticks for the each side of the drivetrain to turn
-     */
-    public static double rotateX(double angle){
-      double encoderTicks = ((13/90)* angle);
-      return encoderTicks;
-    }
 
     // allowed error for motors
     public static double allowedError = 0.05;

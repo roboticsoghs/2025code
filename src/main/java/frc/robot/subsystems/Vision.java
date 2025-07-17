@@ -42,7 +42,7 @@ public class Vision extends SubsystemBase {
     // limelight 3D offsets relative to camera
     x = camera[0]; // in meters
     y = camera[1]; // in meters
-    z = camera[2]; // distance in meteres
+    z = camera[2]; // distance in meters
     pitch = camera[3];
     yaw = camera[4];
     roll = camera[5];
@@ -57,7 +57,7 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("Limelight Pitch", pitch);
     SmartDashboard.putNumber("Limelight Yaw", yaw);
     SmartDashboard.putNumber("Limelight Roll", roll);
-    
+
     SmartDashboard.putNumber("AprilTag ID", aprilTagId);
     // output if the limelight sees an AprilTag
     SmartDashboard.putBoolean("AprilTag Seen", isApriltag());
@@ -105,130 +105,119 @@ public class Vision extends SubsystemBase {
 
   // align robot to reef (angle is in degrees)
   public void makeParallel(double angleDegrees) {
-    // if (Math.abs(angleDegrees) < 3.0) return; // ignore small angles
+    if (Math.abs(angleDegrees) < 2.0) return;
 
-    // final double rotationsPerDegree = 0.05; // adjust value as needed
-    // double baseRotations = angleDegrees * rotationsPerDegree;
+    final double degreesToRotations = 0.015; // TODO: tune constant
 
-    // // clamp wheel rotations between -8 and 8
-    // baseRotations = Math.max(-8.0, Math.min(8.0, baseRotations));
+    double wheelRotations = angleDegrees * degreesToRotations;
 
-    // // EXPIRAMENTAL
-    // if (Math.abs(angleDegrees) > 10.0) {
-    //   baseRotations *= 0.85;
-    // } else if (Math.abs(angleDegrees) > 5.0) {
-    //   baseRotations *= 0.9;
+    wheelRotations = Math.max(-6.0, Math.min(6.0, wheelRotations));
+
+    if (Math.abs(wheelRotations) < 0.3) {
+      wheelRotations = Math.copySign(0.3, wheelRotations);
+    }
+
+    SmartDashboard.putNumber("parallel rotations", wheelRotations);
+
+    RobotContainer.drivetrain.resetAllEncoders();
+    RobotContainer.drivetrain.setRightSideMotorsPosition(-wheelRotations);
+    RobotContainer.drivetrain.setLeftSideMotorsPosition(wheelRotations);
+
+    try {
+      Thread.sleep(600);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    // OLD CODE
+
+    // double distToMove = Math.sin(Math.toRadians(angleDegrees)) * (Constants.DriveTrainGearRatio);
+    // SmartDashboard.putNumber("rotations to rotate", distToMove);
+    // if(angleDegrees < 0 && Math.abs(distToMove) > 1.0) {
+    //   distToMove *= 0.7;
+    // }else
+    // if(angleDegrees > 0 && Math.abs(distToMove) > 1.0) {
+    //   distToMove *= 0.85;
     // }
 
-    // double leftRotations = baseRotations;
-    // double rightRotations = baseRotations;
-
-    // RobotContainer.drivetrain.resetAllEncoders();
-    // RobotContainer.drivetrain.setAllMotorsPosition(leftRotations, rightRotations);
-
-    double distToMove = Math.sin(Math.toRadians(angleDegrees)) * (Constants.DriveTrainGearRatio);
-    SmartDashboard.putNumber("rotations to rotate", distToMove);
-    if(angleDegrees < 0 && Math.abs(distToMove) > 1.0) {
-      distToMove *= 0.7;
-    }else
-    if(angleDegrees > 0 && Math.abs(distToMove) > 1.0) {
-      distToMove *= 0.85;
-    }
-
-    RobotContainer.drivetrain.setRightSideMotorsPosition(-distToMove);
-    RobotContainer.drivetrain.setLeftSideMotorsPosition(distToMove);
-    try {
-      Thread.sleep(750);
-    } catch(InterruptedException e) {
-        e.printStackTrace();
-    }
+    // RobotContainer.drivetrain.setRightSideMotorsPosition(-distToMove);
+    // RobotContainer.drivetrain.setLeftSideMotorsPosition(distToMove);
+    // try {
+    //   Thread.sleep(750);
+    // } catch(InterruptedException e) {
+    //     e.printStackTrace();
+    // }
   }
 
   /**
    * Auto aligns the robot to the left reef pole
    */
   public void alignToReef(double offset) {
-    // if (!isApriltag()) return; // AprilTag not found yet
+    if (!isApriltag()) return;
 
-    // double cameraYaw = getYaw();
-    // double z = getZ();
-
-    // makeParallel(cameraYaw); // doesn't make parallel when under 2 degrees error
-
-    // double xOffset = getX() / 39.37; // convert x offset from meters to inches
-    // double distanceToMove = offset - xOffset;
-    // double rotations = Math.abs(RobotContainer.drivetrain.lineartoRotations(distanceToMove));
-
-    // RobotContainer.drivetrain.resetAllEncoders();
-    // RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
-
-    // adjustElevatorHeight(z);
-
-    if(isApriltag()) {
-      // first make the robot parallel to the reef
-      double yawVal = getYaw();
-      if(Math.abs(yawVal) > 3) {
-        makeParallel(yawVal);
-      }
-      // calculate distance needed to line up with reef
-      double distToMove = offset - (getX() / 39.37);
-      double zVal = getZ();
-      double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
-      RobotContainer.drivetrain.resetAllEncoders();
-      SmartDashboard.putNumber("rotations to move", rotations);
-      RobotContainer.drivetrain.resetAllEncoders();
-      RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
-      adjustElevatorHeight(zVal);
+    double yawVal = getYaw();
+    if (Math.abs(yawVal) > 2.5) {
+      makeParallel(yawVal);
     }
+
+    double currentXInches = getX() * 39.3701; // convert from meters to inches
+
+    double errorX = offset - currentXInches;
+
+    double rotations = RobotContainer.drivetrain.lineartoRotations(errorX);
+    rotations = Math.round(rotations * 100.0) / 100.0;
+
+    SmartDashboard.putNumber("x offset error (inches)", errorX);
+    SmartDashboard.putNumber("align rotations", rotations);
+
+    RobotContainer.drivetrain.resetAllEncoders();
+    RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+
+    double zVal = getZ();
+    adjustElevatorHeight(zVal);
+
+    // OLD CODE
+
+    // if(isApriltag()) {
+    //   // first make the robot parallel to the reef
+    //   double yawVal = getYaw();
+    //   if(Math.abs(yawVal) > 3) {
+    //     makeParallel(yawVal);
+    //   }
+    //   // calculate distance needed to line up with reef
+    //   double distToMove = offset - (getX() / 39.37);
+    //   double zVal = getZ();
+    //   double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
+    //   RobotContainer.drivetrain.resetAllEncoders();
+    //   SmartDashboard.putNumber("rotations to move", rotations);
+    //   RobotContainer.drivetrain.resetAllEncoders();
+    //   RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+    //   adjustElevatorHeight(zVal);
+    // }
   }
-
-  /**
-   * Auto aligns the robot to the right reef pole
-   */
-  // public void alignRightSide() {
-  //   if(isApriltag()) {
-  //     double distToMove = Constants.rightAlignReef - (getX() / 39.37);
-  //     double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
-  //     RobotContainer.drivetrain.resetAllEncoders();
-  //     makeParallel();
-  //     SmartDashboard.putNumber("rotations to move", rotations);
-  //     RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getleftFrontEncoder() + rotations, RobotContainer.drivetrain.getRightFrontEncoder() + rotations);
-  //   }
-  // }
-
-  /**
-   * Auto aligns the robot between the reef poles
-   */
-  // public void alignCenterSide() {
-  //   if(isApriltag()) {
-  //     double distToMove = Constants.reefCenter - (getX() / 39.37);
-  //     double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
-  //     RobotContainer.drivetrain.resetAllEncoders();
-  //     makeParallel();
-  //     SmartDashboard.putNumber("rotations to move", rotations);
-  //     RobotContainer.drivetrain.setAllMotorsPosition(RobotContainer.drivetrain.getleftFrontEncoder() + rotations, RobotContainer.drivetrain.getRightFrontEncoder() + rotations);
-  //     adjustElevatorHeight();
-  //   }
-  // }
 
   /**
    * Adjust elevator height based on distance from the reef.
    * zVal is the distance to the detected AprilTag in meters
    */
   private void adjustElevatorHeight(double zVal) {
-    final double idealDist = 0.10; // in meters
-    final double deadzone = 0.02;
-    final double maxError = 0.2;
-    final double maxRotations = 6; // max of 4 rotations of adjustment
-    
-    double error = zVal - idealDist; // calculate driver error
-    if (Math.abs(error) < deadzone) return; // no adjustment needed
-    
-    double normalizedError = Math.max(-1.0, Math.min(1.0, error / maxError));
-    double rotationAmount = normalizedError * maxRotations;
+    // in meters
+    final double idealDist = 0.10;
+    final double maxDistError = 0.20;
+    final double maxElevatorOffset = 4.0;
 
-    RobotContainer.elevator.moveRotation(rotationAmount);
+    double error = zVal - idealDist;
+    error = Math.max(-maxDistError, Math.min(maxDistError, error));
 
+    double normalizedError = error / maxDistError;
+    double rotations = normalizedError * maxElevatorOffset;
+
+    RobotContainer.elevator.moveRotation(rotations);
+
+    SmartDashboard.putNumber("elevator offset error (m)", error);
+    SmartDashboard.putNumber("elevator adjust rotations", rotations);
+
+    // OLD CODE
 
     // if (zVal < 0.15) {
     //   // move down 1 rotation when within 15cm of the reef
@@ -239,7 +228,7 @@ public class Vision extends SubsystemBase {
     // } else if (zVal > 0.30) {
     //   // move up 4 rotation when further than 30cm from the reef
     //   RobotContainer.elevator.moveRotation(4);
-    // } 
+    // }
   }
 
   @Override
