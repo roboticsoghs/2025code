@@ -105,13 +105,11 @@ public class Vision extends SubsystemBase {
 
   // align robot to reef (angle is in degrees)
   public void makeParallel(double angleDegrees) {
-    if (Math.abs(angleDegrees) < 2.0) return;
-
-    final double degreesToRotations = 0.015; // TODO: tune constant
+    final double degreesToRotations = 0.15; // magic constant
 
     double wheelRotations = angleDegrees * degreesToRotations;
 
-    wheelRotations = Math.max(-6.0, Math.min(6.0, wheelRotations));
+    wheelRotations = Math.max(-5.0, Math.min(5.0, wheelRotations));
 
     if (Math.abs(wheelRotations) < 0.3) {
       wheelRotations = Math.copySign(0.3, wheelRotations);
@@ -128,25 +126,6 @@ public class Vision extends SubsystemBase {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-
-    // OLD CODE
-
-    // double distToMove = Math.sin(Math.toRadians(angleDegrees)) * (Constants.DriveTrainGearRatio);
-    // SmartDashboard.putNumber("rotations to rotate", distToMove);
-    // if(angleDegrees < 0 && Math.abs(distToMove) > 1.0) {
-    //   distToMove *= 0.7;
-    // }else
-    // if(angleDegrees > 0 && Math.abs(distToMove) > 1.0) {
-    //   distToMove *= 0.85;
-    // }
-
-    // RobotContainer.drivetrain.setRightSideMotorsPosition(-distToMove);
-    // RobotContainer.drivetrain.setLeftSideMotorsPosition(distToMove);
-    // try {
-    //   Thread.sleep(750);
-    // } catch(InterruptedException e) {
-    //     e.printStackTrace();
-    // }
   }
 
   /**
@@ -156,25 +135,26 @@ public class Vision extends SubsystemBase {
     if (!isApriltag()) return;
 
     double yawVal = getYaw();
-    if (Math.abs(yawVal) > 2.5) {
-      makeParallel(yawVal);
-    }
 
+    makeParallel(yawVal);
+    
     double currentXInches = getX() * 39.3701; // convert from meters to inches
 
     double errorX = offset - currentXInches;
 
     double rotations = RobotContainer.drivetrain.lineartoRotations(errorX);
-    rotations = Math.round(rotations * 100.0) / 100.0;
+    // rotations = Math.round(rotations * 100.0) / 100.0;
 
     SmartDashboard.putNumber("x offset error (inches)", errorX);
     SmartDashboard.putNumber("align rotations", rotations);
 
     RobotContainer.drivetrain.resetAllEncoders();
-    RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+    RobotContainer.drivetrain.setRightSideMotorsPosition(50);
+    RobotContainer.drivetrain.setLeftSideMotorsPosition(50);
+    SmartDashboard.putNumber("left side pos:", RobotContainer.drivetrain.getEncoderVal());
 
-    double zVal = getZ();
-    adjustElevatorHeight(zVal);
+    // double zVal = getZ();
+    // adjustElevatorHeight(zVal);
 
     // OLD CODE
 

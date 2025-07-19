@@ -58,7 +58,7 @@ public final class Constants {
 
     // inches
     // TODO: adjust constants
-    public static double leftAlignReef = -5.14; // prev: -5.84
+    public static double leftAlignReef = -5; // prev: -3.8
     public static double reefCenter = -11.2; // prev: -2.5
     public static double rightAlignReef = -15; // prev: -16
 

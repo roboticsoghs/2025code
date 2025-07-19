@@ -75,7 +75,7 @@ public class JoystickCommand extends Command {
       // triggerPressed(0.4);
       // ignoreDrive = false;
       // ignoreOp = false;
-    }
+    } else
     if(RobotContainer.leftAlignButton.getAsBoolean()) {
       ignoreDrive = true;
       ignoreOp = true;
@@ -86,9 +86,9 @@ public class JoystickCommand extends Command {
           e.printStackTrace();
       }
       // triggerPressed(0.4);
-      ignoreDrive = false;
+      // ignoreDrive = false;
       // ignoreOp = false;
-    }
+    } else 
     if(RobotContainer.rightAlignButton.getAsBoolean()) {
       ignoreDrive = true;
       ignoreOp = true;
@@ -99,7 +99,7 @@ public class JoystickCommand extends Command {
           e.printStackTrace();
       }
       // triggerPressed(0.5);
-      ignoreDrive = false;
+      // ignoreDrive = false;
       // ignoreOp = false;
     }
 

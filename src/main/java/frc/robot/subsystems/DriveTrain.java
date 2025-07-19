@@ -118,10 +118,10 @@ public class DriveTrain extends SubsystemBase {
         rightRearEncoder = rightRearMotor.getEncoder();
 
         // set idle mode for motors
-        leftFrontConfig.idleMode(IdleMode.kCoast);
-        leftRearConfig.idleMode(IdleMode.kCoast);
-        rightFrontConfig.idleMode(IdleMode.kCoast);
-        rightRearConfig.idleMode(IdleMode.kCoast);
+        leftFrontConfig.idleMode(IdleMode.kBrake);
+        leftRearConfig.idleMode(IdleMode.kBrake);
+        rightFrontConfig.idleMode(IdleMode.kBrake);
+        rightRearConfig.idleMode(IdleMode.kBrake);
 
         leftFrontConfig.inverted(false);
         // leftRear.setInverted(false);
