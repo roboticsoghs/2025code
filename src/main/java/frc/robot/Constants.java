@@ -58,9 +58,9 @@ public final class Constants {
 
     // inches
     // TODO: adjust constants
-    public static double leftAlignReef = -5; // prev: -3.8
-    public static double reefCenter = -11.2; // prev: -2.5
-    public static double rightAlignReef = -15; // prev: -16
+    public static double leftAlignReef = -5.14; // prev: 
+    public static double reefCenter = -11.2; // prev: 
+    public static double rightAlignReef = -15; // prev: 
 
     // allowed error for motors
     public static double allowedError = 0.05;

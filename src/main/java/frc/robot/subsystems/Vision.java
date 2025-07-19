@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.RobotContainer;
 
 public class Vision extends SubsystemBase {
@@ -22,12 +23,15 @@ public class Vision extends SubsystemBase {
   private long aprilTagId;
   private double[] camera = new double[6];
 
+  private double alignState;
+
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry cameraPose = table.getEntry("targetpose_cameraspace");
 
   public Vision() {
     System.out.println("We are cooked!");
     aprilTagId = 0;
+    alignState = 0;
   }
 
   @Override
@@ -126,6 +130,8 @@ public class Vision extends SubsystemBase {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
+
+    alignState = 1;
   }
 
   /**
@@ -134,27 +140,32 @@ public class Vision extends SubsystemBase {
   public void alignToReef(double offset) {
     if (!isApriltag()) return;
 
-    double yawVal = getYaw();
-
-    makeParallel(yawVal);
+    if (alignState == 0) {
+      double yawVal = getYaw();
+      makeParallel(yawVal);
+    }
     
-    double currentXInches = getX() * 39.3701; // convert from meters to inches
+    if (alignState == 1) {
 
-    double errorX = offset - currentXInches;
+      double currentXOffset = getX() * 39.37;
+      double distToMove = offset - currentXOffset;
 
-    double rotations = RobotContainer.drivetrain.lineartoRotations(errorX);
-    // rotations = Math.round(rotations * 100.0) / 100.0;
+      double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
 
-    SmartDashboard.putNumber("x offset error (inches)", errorX);
-    SmartDashboard.putNumber("align rotations", rotations);
+      SmartDashboard.putNumber("align rotations", rotations);
 
-    RobotContainer.drivetrain.resetAllEncoders();
-    RobotContainer.drivetrain.setRightSideMotorsPosition(50);
-    RobotContainer.drivetrain.setLeftSideMotorsPosition(50);
-    SmartDashboard.putNumber("left side pos:", RobotContainer.drivetrain.getEncoderVal());
+      RobotContainer.drivetrain.resetAllEncoders();
+      RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
+      
+      alignState = 2;
+    }
 
-    // double zVal = getZ();
-    // adjustElevatorHeight(zVal);
+    if (alignState == 2) {
+      double zVal = getZ();
+      adjustElevatorHeight(zVal);
+
+      alignState = 0;
+    }
 
     // OLD CODE
 
