@@ -65,8 +65,8 @@ public class DriveTrain extends SubsystemBase {
     private final double SmartPositionD = 0;
     private final double SmartPositionFF = 0;
 
-    private final double SmartPositionMaxAccel = 2700;
-    private final double SmartPositionMaxVel = 3500;
+    private final double SmartPositionMaxAccel = 1500;
+    private final double SmartPositionMaxVel = 2700;
 
     private final double SmartPositionAllowedError = lineartoRotations(3);
 
@@ -76,12 +76,12 @@ public class DriveTrain extends SubsystemBase {
     // private final double MinOutput = -1; // unused
 
     // max motor acceleration
-    private final double maxAccel = 40000;
+    private final double maxAccel = 30000;
 
     private double encoderVal = 0;
     // private final int SmartMotionID = 0; // unused
     // private int MaxMotionID = 1; // unused
-    private final int maxVel = 2000; // comp: 8000; public: 2000
+    private final int maxVel = 8000; // comp: 8000; demo: 2000
 
     public final double allowedError = 0.05;
 

@@ -4,13 +4,15 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.commands.PathPlannerAuto;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.AutoCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
@@ -45,12 +47,16 @@ public class RobotContainer {
   public static JoystickButton rightAlignButton = new JoystickButton(m_operator, Constants.RIGHT_ALIGN_PORT);
   public static JoystickButton centerAlignButton = new JoystickButton(m_operator, Constants.CENTER_ALIGN_PORT);
   public static JoystickButton unstuckCoralButton = new JoystickButton(m_operator, Constants.UNSTUCK_CORAL_PORT);
+  // public static JoystickButton abortButton = new JoystickButton(m_operator, Constants.ABORT_PORT);
   // public static JoystickButton intakeStart = new JoystickButton(driveStick, 0)
+
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    configureAutos();
   }
 
   /**
@@ -61,6 +67,14 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {}
 
+  private void configureAutos() {
+    autoChooser.setDefaultOption("CENTER LEAVE", AutoCommand.Auto1_CENTER());
+    autoChooser.addOption("1P LEFT", AutoCommand.Auto3_LEFT());
+    autoChooser.addOption("1P RIGHT", AutoCommand.Auto2_RIGHT());
+
+    SmartDashboard.putData("Auto selector", autoChooser);
+  }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -68,6 +82,15 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return new PathPlannerAuto("Auto 2");
+    return autoChooser.getSelected();
+    // return AutoCommand.Auto2_RIGHT();
   }
+
+  // public Command testAuto() {
+  //   return Commands.sequence(
+  //     Commands.runOnce(() -> drivetrain.setAllMotorsSpeed(0.5, 0.5)),
+  //     Commands.waitSeconds(0.5),
+  //     Commands.runOnce(() -> drivetrain.setAllMotorsSpeed(0, 0))
+  //   );
+  // }
 }

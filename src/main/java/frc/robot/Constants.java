@@ -39,6 +39,7 @@ public final class Constants {
     public static int SLOWMODE_PORT = 9;
     public static int LEFT_ALIGN_PORT = 6;
     public static int RIGHT_ALIGN_PORT = 7;
+    // public static int ABORT_PORT = 8;
     public static int CENTER_ALIGN_PORT = 1;
     public static int UNSTUCK_CORAL_PORT = 2;
 
@@ -58,9 +59,9 @@ public final class Constants {
 
     // inches
     // TODO: adjust constants
-    public static double leftAlignReef = -5.14; // prev: 
-    public static double reefCenter = -11.2; // prev: 
-    public static double rightAlignReef = -15; // prev: 
+    public static double leftAlignReef = -5.0; // prev: 
+    public static double reefCenter = -9.5; // prev: -9.5
+    public static double rightAlignReef = -15.0; // prev: -15
 
     // allowed error for motors
     public static double allowedError = 0.05;

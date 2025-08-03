@@ -33,7 +33,7 @@ public class Elevator extends SubsystemBase {
         INTAKE_POSITION(1), 
         LEVEL_0(10.8),
         LEVEL_1(13.9),
-        LEVEL_2(46);
+        LEVEL_2(47);
 
         private final double pos;
         ElevatorPosition(double pos)  {

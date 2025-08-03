@@ -65,42 +65,26 @@ public class JoystickCommand extends Command {
     if(RobotContainer.centerAlignButton.getAsBoolean()) {
       ignoreDrive = true;
       ignoreOp = true;
-      RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
-      try {
-        Thread.sleep(750);
-      } catch(InterruptedException e) {
-          e.printStackTrace();
-      }
+      // RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
+      AimAssist.run(Constants.reefCenter);
       centerMultiplier = 0.4;
-      // triggerPressed(0.4);
-      // ignoreDrive = false;
-      // ignoreOp = false;
     } else
     if(RobotContainer.leftAlignButton.getAsBoolean()) {
       ignoreDrive = true;
       ignoreOp = true;
-      RobotContainer.visionSystem.alignToReef(Constants.leftAlignReef);
-      try {
-        Thread.sleep(750);
-      } catch(InterruptedException e) {
-          e.printStackTrace();
-      }
-      // triggerPressed(0.4);
-      // ignoreDrive = false;
-      // ignoreOp = false;
+      // RobotContainer.visionSystem.alignToReef(Constants.leftAlignReef);
+      AimAssist.run(Constants.leftAlignReef);
     } else 
     if(RobotContainer.rightAlignButton.getAsBoolean()) {
       ignoreDrive = true;
       ignoreOp = true;
-      RobotContainer.visionSystem.alignToReef(Constants.rightAlignReef);
-      try {
-        Thread.sleep(750);
-      } catch(InterruptedException e) {
-          e.printStackTrace();
-      }
-      // triggerPressed(0.5);
-      // ignoreDrive = false;
-      // ignoreOp = false;
+      // RobotContainer.visionSystem.alignToReef(Constants.rightAlignReef);
+      AimAssist.run(Constants.rightAlignReef);
+    }
+
+    if (RobotContainer.driveStick.getBButtonPressed()) {
+      ignoreDrive = false;
+      ignoreOp = false;
     }
 
     if(RobotContainer.m_operator.isConnected()){
@@ -158,7 +142,7 @@ public class JoystickCommand extends Command {
     }
     if (RobotContainer.driveStick.getRightTriggerAxis() > 0.5) {
       SmartDashboard.putBoolean("Right click", true);
-      handleRightTriggerPressed(0.4 * centerMultiplier); // 25% speed
+      handleRightTriggerPressed(0.5 * centerMultiplier); // 25% speed
       ignoreOp = false;
       ignoreDrive = false;
     }
@@ -246,7 +230,7 @@ public class JoystickCommand extends Command {
 }
 
   private void handleRightTriggerPressed(double speed) {
-    RobotContainer.shooter.shoot_that_fucker(speed);
+    RobotContainer.shooter.outtake(speed);
     try {
       Thread.sleep(250);
     } catch(InterruptedException e) {

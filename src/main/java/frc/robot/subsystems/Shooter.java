@@ -113,7 +113,7 @@ public class Shooter extends SubsystemBase {
         return Encoder.getPosition() * 42;
     }
 
-    public void shoot_that_fucker(double speed) { 
+    public void outtake(double speed) { 
         PID.setReference(speed, ControlType.kDutyCycle);
         isLoaded = false;
         intakingLoad = false;
@@ -126,17 +126,25 @@ public class Shooter extends SubsystemBase {
             if (getLimitSwitch()) {
                 try {
                     Thread.sleep(150);
-                } catch(InterruptedException e) {
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                SmartDashboard.putBoolean("Intake complete", true);
                 isLoaded = true;
-            } else {
-                SmartDashboard.putBoolean("Intake complete", false);
+                intakingLoad = false;
+                PID.setReference(0, ControlType.kDutyCycle);
             }
+            // if (getLimitSwitch()) {
+                
+            //     SmartDashboard.putBoolean("Intake complete", true);
+            //     isLoaded = true;
+            //     PID.setReference(0, ControlType.kDutyCycle);
+            // } else {
+            //     SmartDashboard.putBoolean("Intake complete", false);
+            // }
         }
-        SmartDashboard.putBoolean("coral outtake: ", isLoaded);
-        SmartDashboard.putBoolean("intaking", intakingLoad);
+
+        SmartDashboard.putBoolean("Intake complete", isLoaded);
+        SmartDashboard.putBoolean("Intaking", intakingLoad);
     }
 
     public void reverse(double speed) {

@@ -23,7 +23,7 @@ public class Vision extends SubsystemBase {
   private long aprilTagId;
   private double[] camera = new double[6];
 
-  private double alignState;
+  private int alignState;
 
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry cameraPose = table.getEntry("targetpose_cameraspace");
@@ -31,7 +31,7 @@ public class Vision extends SubsystemBase {
   public Vision() {
     System.out.println("We are cooked!");
     aprilTagId = 0;
-    alignState = 0;
+    alignState = -1;
   }
 
   @Override
@@ -65,6 +65,8 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("AprilTag ID", aprilTagId);
     // output if the limelight sees an AprilTag
     SmartDashboard.putBoolean("AprilTag Seen", isApriltag());
+
+    SmartDashboard.putNumber("align state", alignState);
   }
 
   /**
@@ -108,15 +110,21 @@ public class Vision extends SubsystemBase {
   }
 
   // align robot to reef (angle is in degrees)
-  public void makeParallel(double angleDegrees) {
-    final double degreesToRotations = 0.15; // magic constant
+  public void makeParallel(double angleDegrees, boolean isAuto) {
+    if (!isAuto) isAuto = false;
+    // if (Math.abs(angleDegrees) < 1) return;
 
+    final double degreesToRotations = 0.16; // magic constant
+
+    // convert degrees to motor rotations
     double wheelRotations = angleDegrees * degreesToRotations;
 
-    wheelRotations = Math.max(-5.0, Math.min(5.0, wheelRotations));
+    // clamp rotations between -6 and 6
+    wheelRotations = Math.max(-6.0, Math.min(6.0, wheelRotations));
 
-    if (Math.abs(wheelRotations) < 0.3) {
-      wheelRotations = Math.copySign(0.3, wheelRotations);
+    if (Math.abs(wheelRotations) < 4 && !isAuto) {
+      // minimum of 4 rotations (except during auton)
+      wheelRotations = Math.copySign(4, wheelRotations);
     }
 
     SmartDashboard.putNumber("parallel rotations", wheelRotations);
@@ -124,12 +132,6 @@ public class Vision extends SubsystemBase {
     RobotContainer.drivetrain.resetAllEncoders();
     RobotContainer.drivetrain.setRightSideMotorsPosition(-wheelRotations);
     RobotContainer.drivetrain.setLeftSideMotorsPosition(wheelRotations);
-
-    try {
-      Thread.sleep(600);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
 
     alignState = 1;
   }
@@ -140,23 +142,28 @@ public class Vision extends SubsystemBase {
   public void alignToReef(double offset) {
     if (!isApriltag()) return;
 
+    alignState = 0;
     if (alignState == 0) {
       double yawVal = getYaw();
-      makeParallel(yawVal);
+      makeParallel(yawVal, false);
     }
     
     if (alignState == 1) {
-
-      double currentXOffset = getX() * 39.37;
+      double x = getX();
+      double currentXOffset = x * 39.37;
       double distToMove = offset - currentXOffset;
 
       double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove);
+
+      if (Math.abs(rotations) < 5) {
+        rotations = Math.copySign(5, rotations);
+      }
 
       SmartDashboard.putNumber("align rotations", rotations);
 
       RobotContainer.drivetrain.resetAllEncoders();
       RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
-      
+
       alignState = 2;
     }
 
@@ -166,25 +173,6 @@ public class Vision extends SubsystemBase {
 
       alignState = 0;
     }
-
-    // OLD CODE
-
-    // if(isApriltag()) {
-    //   // first make the robot parallel to the reef
-    //   double yawVal = getYaw();
-    //   if(Math.abs(yawVal) > 3) {
-    //     makeParallel(yawVal);
-    //   }
-    //   // calculate distance needed to line up with reef
-    //   double distToMove = offset - (getX() / 39.37);
-    //   double zVal = getZ();
-    //   double rotations = Math.round(RobotContainer.drivetrain.lineartoRotations(distToMove) * 100.0) / 100.0;
-    //   RobotContainer.drivetrain.resetAllEncoders();
-    //   SmartDashboard.putNumber("rotations to move", rotations);
-    //   RobotContainer.drivetrain.resetAllEncoders();
-    //   RobotContainer.drivetrain.setAllMotorsPosition(rotations, rotations);
-    //   adjustElevatorHeight(zVal);
-    // }
   }
 
   /**
@@ -193,7 +181,7 @@ public class Vision extends SubsystemBase {
    */
   private void adjustElevatorHeight(double zVal) {
     // in meters
-    final double idealDist = 0.10;
+    final double idealDist = 0.30;
     final double maxDistError = 0.20;
     final double maxElevatorOffset = 4.0;
 
@@ -201,25 +189,11 @@ public class Vision extends SubsystemBase {
     error = Math.max(-maxDistError, Math.min(maxDistError, error));
 
     double normalizedError = error / maxDistError;
-    double rotations = normalizedError * maxElevatorOffset;
+    double rotations = (normalizedError * maxElevatorOffset);
 
     RobotContainer.elevator.moveRotation(rotations);
 
-    SmartDashboard.putNumber("elevator offset error (m)", error);
-    SmartDashboard.putNumber("elevator adjust rotations", rotations);
-
-    // OLD CODE
-
-    // if (zVal < 0.15) {
-    //   // move down 1 rotation when within 15cm of the reef
-    //   RobotContainer.elevator.moveRotation(-1);
-    // } else if (zVal > 0.20) {
-    //   // move up 1 rotation when further than 20cm from the reef
-    //   RobotContainer.elevator.moveRotation(2);
-    // } else if (zVal > 0.30) {
-    //   // move up 4 rotation when further than 30cm from the reef
-    //   RobotContainer.elevator.moveRotation(4);
-    // }
+    SmartDashboard.putNumber("elevator rotations", rotations);
   }
 
   @Override
