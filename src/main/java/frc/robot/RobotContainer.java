@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.AimAssist;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.DriveTrain;
@@ -65,7 +66,11 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {}
+  private void configureButtonBindings() {
+    leftAlignButton.whileTrue(
+      AimAssist.run(Constants.leftAlignReef)
+    );
+  }
 
   private void configureAutos() {
     autoChooser.setDefaultOption("CENTER LEAVE", AutoCommand.Auto1_CENTER());
@@ -83,14 +88,5 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return autoChooser.getSelected();
-    // return AutoCommand.Auto2_RIGHT();
   }
-
-  // public Command testAuto() {
-  //   return Commands.sequence(
-  //     Commands.runOnce(() -> drivetrain.setAllMotorsSpeed(0.5, 0.5)),
-  //     Commands.waitSeconds(0.5),
-  //     Commands.runOnce(() -> drivetrain.setAllMotorsSpeed(0, 0))
-  //   );
-  // }
 }

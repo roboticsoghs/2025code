@@ -1,6 +1,7 @@
 package frc.robot.commands.AutoAlign;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 
@@ -13,6 +14,8 @@ public class AlignYawCommand extends Command {
 
     @Override
     public void initialize() {
+        SmartDashboard.putString("Debug", "Aligning YAW");
+
         double yaw = RobotContainer.visionSystem.getYaw();
         RobotContainer.visionSystem.makeParallel(yaw, false);
         timer.reset();

@@ -8,6 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Elevator.ElevatorPosition;
@@ -60,27 +61,35 @@ public class JoystickCommand extends Command {
       slowModeMultiplier = !slowModeMultiplier;
       SmartDashboard.putBoolean("slowMode", slowModeMultiplier);
     } else {
-      SmartDashboard.putBoolean("slow mode: ", slowModeMultiplier);
+      SmartDashboard
+      .putBoolean("slow mode: ", slowModeMultiplier);
     }
-    if(RobotContainer.centerAlignButton.getAsBoolean()) {
-      ignoreDrive = true;
-      ignoreOp = true;
-      // RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
-      AimAssist.run(Constants.reefCenter);
-      centerMultiplier = 0.4;
-    } else
-    if(RobotContainer.leftAlignButton.getAsBoolean()) {
-      ignoreDrive = true;
-      ignoreOp = true;
-      // RobotContainer.visionSystem.alignToReef(Constants.leftAlignReef);
-      AimAssist.run(Constants.leftAlignReef);
-    } else 
-    if(RobotContainer.rightAlignButton.getAsBoolean()) {
-      ignoreDrive = true;
-      ignoreOp = true;
-      // RobotContainer.visionSystem.alignToReef(Constants.rightAlignReef);
-      AimAssist.run(Constants.rightAlignReef);
-    }
+
+    // if(RobotContainer.centerAlignButton.getAsBoolean()) {
+    //   ignoreDrive = true;
+    //   ignoreOp = true;
+    //   // RobotContainer.visionSystem.alignToReef(Constants.reefCenter);
+    //   AimAssist.run(Constants.reefCenter);
+    //   SmartDashboard.putBoolean("running aim assist", false);
+
+    //   centerMultiplier = 0.4;
+    // } else
+    // if(RobotContainer.leftAlignButton.getAsBoolean()) {
+    //   ignoreDrive = true;
+    //   ignoreOp = true;
+    //   // RobotContainer.visionSystem.alignToReef(Constants.leftAlignReef);
+    //   AimAssist.run(Constants.leftAlignReef);
+    //   SmartDashboard.putBoolean("running aim assist", false);
+
+    // } else 
+    // if(RobotContainer.rightAlignButton.getAsBoolean()) {
+    //   ignoreDrive = true;
+    //   ignoreOp = true;
+    //   // RobotContainer.visionSystem.alignToReef(Constants.rightAlignReef);
+    //   AimAssist.run(Constants.rightAlignReef);
+    //   SmartDashboard.putBoolean("running aim assist", false);
+
+    // }
 
     if (RobotContainer.driveStick.getBButtonPressed()) {
       ignoreDrive = false;

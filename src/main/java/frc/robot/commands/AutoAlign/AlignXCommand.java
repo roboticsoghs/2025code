@@ -1,6 +1,7 @@
 package frc.robot.commands.AutoAlign;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 
@@ -15,9 +16,12 @@ public class AlignXCommand extends Command {
 
     @Override
     public void initialize() {
+        SmartDashboard.putString("Debug", "Aligning X");
         double currentXOffset = RobotContainer.visionSystem.getX() * 39.37; // convert limelight meters to inches
         double distToMove = targetOffset - currentXOffset; // get error offset
         double rotations = RobotContainer.drivetrain.lineartoRotations(distToMove); // convert linear distance to motor rotations
+
+        SmartDashboard.putNumber("align rotations", rotations);
 
         if (Math.abs(rotations) < 5) { 
             // min of 5 rotations (pos/neg)

@@ -1,6 +1,7 @@
 package frc.robot.commands.AutoAlign;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.RobotContainer;
 
@@ -13,6 +14,7 @@ public class AdjustElevatorCommand extends Command {
 
     @Override
     public void initialize() {
+        SmartDashboard.putString("Debug", "Aligning elevator");
         double zVal = RobotContainer.visionSystem.getZ();
         final double idealDist = 0.25; // 25 cm
         final double maxDistError = 0.15; // max error in cm
